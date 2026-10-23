@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\QuoteRequest;
 use App\Models\User;
 
 test('guests are redirected to the login page', function () {
@@ -7,10 +8,10 @@ test('guests are redirected to the login page', function () {
     $response->assertRedirect(route('login'));
 });
 
-test('authenticated users can visit the dashboard', function () {
-    $user = User::factory()->create();
-    $this->actingAs($user);
+test('the admin can visit the dashboard and see new quote requests', function () {
+    QuoteRequest::factory()->create(['name' => 'Ngozi Eze']);
+    $this->actingAs(User::factory()->admin()->create());
 
     $response = $this->get(route('dashboard'));
-    $response->assertOk();
+    $response->assertOk()->assertSee('Ngozi Eze');
 });

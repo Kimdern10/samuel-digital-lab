@@ -11,9 +11,21 @@
             </flux:sidebar.header>
 
             <flux:sidebar.nav>
-                <flux:sidebar.group :heading="__('Platform')" class="grid">
+                <flux:sidebar.group :heading="__('Website')" class="grid">
                     <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="photo" :href="route('admin.works.index')" :current="request()->routeIs('admin.works.*')" wire:navigate>
+                        {{ __('Our work') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="inbox" :href="route('admin.quotes.index')" :current="request()->routeIs('admin.quotes.*')" :badge="\App\Models\QuoteRequest::query()->where('status', \App\Enums\QuoteStatus::New)->count() ?: null" wire:navigate>
+                        {{ __('Quote requests') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="tag" :href="route('admin.services')" :current="request()->routeIs('admin.services')" wire:navigate>
+                        {{ __('Services & prices') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="cog-6-tooth" :href="route('admin.settings')" :current="request()->routeIs('admin.settings')" wire:navigate>
+                        {{ __('Business details') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
@@ -21,12 +33,8 @@
             <flux:spacer />
 
             <flux:sidebar.nav>
-                <flux:sidebar.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                    {{ __('Repository') }}
-                </flux:sidebar.item>
-
-                <flux:sidebar.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                    {{ __('Documentation') }}
+                <flux:sidebar.item icon="arrow-top-right-on-square" :href="route('home')" target="_blank">
+                    {{ __('View website') }}
                 </flux:sidebar.item>
             </flux:sidebar.nav>
 
