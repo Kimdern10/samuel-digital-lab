@@ -20,6 +20,40 @@ new #[Title('Business details')] class extends Component {
 
     public bool $showNameWithLogo = true;
 
+    public string $analyticsId = '';
+
+    public string $privacyPolicy = '';
+
+    /**
+     * Save the Google Analytics measurement ID (or turn statistics off when empty).
+     */
+    public function saveAnalytics(): void
+    {
+        $this->analyticsId = strtoupper(trim($this->analyticsId));
+
+        $this->validate(['analyticsId' => ['nullable', 'regex:/^G-[A-Z0-9]{4,20}$/']], [
+            'analyticsId.regex' => 'This should look like G-ABC123XYZ. Find it in Google Analytics → Admin → Data streams.',
+        ]);
+
+        Setting::put(['google_analytics_id' => $this->analyticsId]);
+
+        Flux::toast(variant: 'success', text: $this->analyticsId === '' ? __('Visitor statistics turned off.') : __('Visitor statistics turned on.'));
+    }
+
+    /**
+     * Save the privacy policy text.
+     */
+    public function savePrivacyPolicy(): void
+    {
+        $this->validate(['privacyPolicy' => ['required', 'string', 'max:30000']], [
+            'privacyPolicy.required' => 'The privacy policy cannot be empty.',
+        ]);
+
+        Setting::put(['privacy_policy' => $this->privacyPolicy]);
+
+        Flux::toast(variant: 'success', text: __('Privacy policy saved.'));
+    }
+
     /**
      * Save a newly chosen logo straight away.
      */
@@ -76,6 +110,8 @@ new #[Title('Business details')] class extends Component {
     {
         $this->settings = Setting::values();
         $this->showNameWithLogo = $this->settings['logo_show_name'] === '1';
+        $this->analyticsId = $this->settings['google_analytics_id'];
+        $this->privacyPolicy = Setting::privacyPolicy();
     }
 
     /**
@@ -188,4 +224,33 @@ new #[Title('Business details')] class extends Component {
             <flux:button variant="primary" type="submit">{{ __('Save details') }}</flux:button>
         </div>
     </form>
+
+    <flux:card class="grid gap-4">
+        <div>
+            <flux:heading size="lg">{{ __('Visitor statistics') }}</flux:heading>
+            <flux:text class="mt-1">{{ __('See how many people visit your website and which pages they read, using free Google Analytics. Create a property at analytics.google.com, then paste its Measurement ID here. Your own visits while logged in are not counted.') }}</flux:text>
+        </div>
+        <form wire:submit="saveAnalytics" class="flex flex-wrap items-end gap-3">
+            <flux:input wire:model="analyticsId" :label="__('Google Analytics Measurement ID')" placeholder="G-ABC123XYZ" class="max-w-64" />
+            <flux:button type="submit">{{ __('Save') }}</flux:button>
+        </form>
+        @if ($settings['google_analytics_id'] !== '' || \App\Models\Setting::get('google_analytics_id') !== '')
+            <flux:text class="text-sm"><flux:badge size="sm" color="green">{{ __('On') }}</flux:badge> {{ __('Leave the box empty and save to turn statistics off.') }}</flux:text>
+        @endif
+    </flux:card>
+
+    <flux:card class="grid gap-4">
+        <div>
+            <flux:heading size="lg">{{ __('Privacy policy') }}</flux:heading>
+            <flux:text class="mt-1">{{ __('Shown on your website at /privacy and linked from the footer and quote form. A starter version is filled in; read it and change anything that is not true for your business.') }}</flux:text>
+        </div>
+        <form wire:submit="savePrivacyPolicy" class="grid gap-3">
+            <flux:textarea wire:model="privacyPolicy" rows="14" class="font-mono text-sm" :aria-label="__('Privacy policy')" />
+            <flux:text class="text-sm">{{ __('Formatting: ## Heading · **bold** · - list item. Leave an empty line between paragraphs.') }}</flux:text>
+            <div class="flex flex-wrap gap-2">
+                <flux:button variant="primary" type="submit">{{ __('Save privacy policy') }}</flux:button>
+                <flux:button icon="arrow-top-right-on-square" :href="route('privacy')" target="_blank">{{ __('View page') }}</flux:button>
+            </div>
+        </form>
+    </flux:card>
 </div>

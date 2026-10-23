@@ -12,12 +12,13 @@
     $metaDescription = $description ?: $site['seo_description'];
     $whatsApp = \App\Support\WhatsApp::link($site['whatsapp_primary'], 'Hello '.$site['business_name'].', I would like a website.');
     $socials = array_filter(['Facebook' => $site['facebook_url'], 'Instagram' => $site['instagram_url'], 'X' => $site['x_url'], 'LinkedIn' => $site['linkedin_url'], 'TikTok' => $site['tiktok_url']]);
-    $links = [
+    $links = array_filter([
         'Services' => route('home').'#services',
         'Work' => route('work.index'),
+        'Blog' => \App\Models\Post::query()->published()->exists() ? route('blog.index') : null,
         'Process' => route('home').'#process',
         'Contact' => route('home').'#contact',
-    ];
+    ]);
 @endphp
 
 <!DOCTYPE html>
@@ -36,12 +37,13 @@
         <meta property="og:description" content="{{ $metaDescription }}">
         <meta property="og:url" content="{{ url()->current() }}">
         <meta property="og:locale" content="en_NG">
-        @if ($image)
-            <meta property="og:image" content="{{ $image }}">
-            <meta name="twitter:card" content="summary_large_image">
-        @else
-            <meta name="twitter:card" content="summary">
-        @endif
+        <meta property="og:image" content="{{ $image ?: asset('brand/share.png') }}">
+        @unless ($image)
+            <meta property="og:image:width" content="1200">
+            <meta property="og:image:height" content="630">
+            <meta property="og:image:alt" content="{{ $site['business_name'] }}: web design and development in Nigeria">
+        @endunless
+        <meta name="twitter:card" content="summary_large_image">
 
         @if ($logoUrl = \App\Models\Setting::logoUrl())
             <link rel="icon" href="{{ $logoUrl }}" type="image/webp">
@@ -56,6 +58,11 @@
 
         @fonts('plus-jakarta-sans')
         @vite(['resources/css/site.css', 'resources/js/site.js'])
+
+        @if (filled($site['google_analytics_id']) && ! auth()->user()?->is_admin)
+            <script async src="https://www.googletagmanager.com/gtag/js?id={{ $site['google_analytics_id'] }}"></script>
+            <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', @json($site['google_analytics_id']));</script>
+        @endif
 
         {{ $head ?? '' }}
     </head>
@@ -140,7 +147,7 @@
                 </div>
                 <div class="footer__bottom">
                     <span>© {{ now()->year }} {{ $site['business_name'] }} · {{ $site['city'] }}</span>
-                    <span>Designed and built in Nigeria.</span>
+                    <span><a href="{{ route('privacy') }}">Privacy policy</a> · Designed and built in Nigeria.</span>
                 </div>
             </div>
         </footer>

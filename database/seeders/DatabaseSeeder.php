@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([ServiceSeeder::class, FaqSeeder::class]);
+        $this->call([ServiceSeeder::class, FaqSeeder::class, PostSeeder::class]);
 
         Work::query()->firstOrCreate(['slug' => 'regional-news-platform'], [
             'title' => 'A regional news platform',

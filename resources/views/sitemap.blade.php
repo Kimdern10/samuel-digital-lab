@@ -18,4 +18,19 @@
             <lastmod>{{ $work->updated_at?->toAtomString() }}</lastmod>
         </url>
     @endforeach
+    @if ($posts->isNotEmpty())
+        <url>
+            <loc>{{ route('blog.index') }}</loc>
+            <lastmod>{{ $posts->max('updated_at')?->toAtomString() }}</lastmod>
+        </url>
+        @foreach ($posts as $post)
+            <url>
+                <loc>{{ route('blog.show', $post) }}</loc>
+                <lastmod>{{ $post->updated_at?->toAtomString() }}</lastmod>
+            </url>
+        @endforeach
+    @endif
+    <url>
+        <loc>{{ route('privacy') }}</loc>
+    </url>
 </urlset>

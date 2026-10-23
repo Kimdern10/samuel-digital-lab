@@ -40,6 +40,8 @@ class Setting extends Model
         'tiktok_url' => '',
         'logo_path' => '',
         'logo_show_name' => '1',
+        'google_analytics_id' => '',
+        'privacy_policy' => '',
 
         // Home page: search engines
         'seo_title' => 'Web design & development in Nigeria',
@@ -71,6 +73,8 @@ class Setting extends Model
         'why_eyebrow' => 'Why choose us',
         'why_title' => 'Built to help your business grow',
         'technologies_title' => 'Technologies we use',
+        'blog_eyebrow' => 'From the blog',
+        'blog_title' => 'Tips to grow your business online',
         'faq_eyebrow' => 'Questions',
         'faq_title' => 'Things people often ask',
         'contact_eyebrow' => 'Contact',
@@ -131,6 +135,7 @@ class Setting extends Model
     public const array BUSINESS_KEYS = [
         'business_name', 'tagline', 'whatsapp_primary', 'whatsapp_secondary', 'email', 'city',
         'facebook_url', 'instagram_url', 'x_url', 'linkedin_url', 'tiktok_url', 'logo_path', 'logo_show_name',
+        'google_analytics_id', 'privacy_policy',
     ];
 
     private const string CACHE_KEY = 'site-settings';
@@ -164,6 +169,58 @@ class Setting extends Model
         $path = self::get('logo_path');
 
         return $path !== '' ? Storage::disk('public')->url($path) : null;
+    }
+
+    /**
+     * Get the privacy policy text (Markdown): the owner's own, or a starter
+     * version filled in with the business details.
+     */
+    public static function privacyPolicy(): string
+    {
+        $saved = trim(self::get('privacy_policy'));
+
+        if ($saved !== '') {
+            return $saved;
+        }
+
+        $values = self::values();
+        $business = $values['business_name'];
+        $email = $values['email'];
+        $phone = $values['whatsapp_primary'];
+
+        return <<<MARKDOWN
+            This page explains what personal information {$business} collects through this website, why, and what you can ask us to do with it. We follow the Nigeria Data Protection Act 2023.
+
+            ## What we collect
+
+            When you send a quote request we collect your **name**, **phone or WhatsApp number**, and, if you give them, your **business name**, **email address** and the **details of your project**. We also record your IP address to protect the form from spam.
+
+            If visitor statistics are switched on, Google Analytics collects anonymous information about how the website is used, such as the pages visited and the type of device.
+
+            ## Why we use it
+
+            - To reply to your request and send you a quote.
+            - To keep in touch about a project you have asked us to do.
+            - To protect the website from spam and abuse.
+
+            We do **not** sell your information or use it for unrelated marketing.
+
+            ## Who can see it
+
+            Only {$business} can see your request. Our website host stores the data securely. Google processes the anonymous statistics if they are switched on.
+
+            ## How long we keep it
+
+            We keep quote requests for up to two years after our last contact, then delete them, unless we need them for a project or the law requires us to keep them.
+
+            ## Your rights
+
+            You can ask us to show you the information we hold about you, correct it, or delete it. Contact us at {$email} or on WhatsApp at {$phone}. You may also complain to the Nigeria Data Protection Commission.
+
+            ## Changes
+
+            We may update this page. The latest version is always shown here.
+            MARKDOWN;
     }
 
     /**

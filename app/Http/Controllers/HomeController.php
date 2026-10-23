@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Faq;
+use App\Models\Post;
 use App\Models\Service;
 use App\Models\Testimonial;
 use App\Models\Work;
@@ -20,6 +21,7 @@ class HomeController extends Controller
             'featuredWorks' => Work::query()->published()->where('is_featured', true)->ordered()->take(4)->get(),
             'testimonials' => Testimonial::query()->visible()->ordered()->get(),
             'faqs' => Faq::query()->visible()->ordered()->get(),
+            'latestPosts' => Post::query()->published()->take(3)->get(),
         ]);
     }
 }

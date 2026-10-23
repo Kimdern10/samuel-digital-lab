@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use App\Models\Work;
 use Illuminate\Http\Response;
 
@@ -17,6 +18,7 @@ class SitemapController extends Controller
         return response()
             ->view('sitemap', [
                 'works' => $works,
+                'posts' => Post::query()->published()->get(['slug', 'updated_at']),
                 'lastUpdated' => $works->max('updated_at'),
             ])
             ->header('Content-Type', 'application/xml; charset=UTF-8');

@@ -203,8 +203,11 @@ new class extends Component {
             <span wire:loading wire:target="submit">Sending…</span>
             <x-site-icon name="arrow-right" wire:loading.remove wire:target="submit" />
         </button>
-        @if (filled($formNote = \App\Models\Setting::get('form_note')))
-            <p class="form-note">{{ $formNote }}</p>
-        @endif
+        <p class="form-note">
+            @if (filled($formNote = \App\Models\Setting::get('form_note')))
+                {{ $formNote }}
+            @endif
+            See our <a href="{{ route('privacy') }}">privacy policy</a>.
+        </p>
     @endif
 </form>

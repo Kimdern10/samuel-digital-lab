@@ -314,6 +314,26 @@
         </div>
     </section>
 
+    {{-- Latest articles --}}
+    @if ($latestPosts->isNotEmpty())
+        <section class="section" id="blog">
+            <div class="container">
+                <div class="section-head section-head--split">
+                    <div data-reveal>
+                        <span class="eyebrow">{{ $site['blog_eyebrow'] }}</span>
+                        <h2>{{ $site['blog_title'] }}</h2>
+                    </div>
+                    <p data-reveal style="--delay: .1s"><a class="link" href="{{ route('blog.index') }}">See all articles →</a></p>
+                </div>
+                <div class="work-grid">
+                    @foreach ($latestPosts as $post)
+                        <x-post-card :post="$post" data-reveal style="--delay: {{ $loop->index * 0.08 }}s" />
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+
     {{-- FAQ --}}
     @if ($faqs->isNotEmpty())
         <section class="section @unless ($testimonials->isNotEmpty()) section--soft @endunless" id="faq">

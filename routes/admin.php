@@ -9,6 +9,10 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::livewire('works/create', 'pages::admin.works.form')->name('admin.works.create');
     Route::livewire('works/{work:id}/edit', 'pages::admin.works.form')->name('admin.works.edit');
 
+    Route::livewire('blog', 'pages::admin.posts.index')->name('admin.posts.index');
+    Route::livewire('blog/create', 'pages::admin.posts.form')->name('admin.posts.create');
+    Route::livewire('blog/{post:id}/edit', 'pages::admin.posts.form')->name('admin.posts.edit');
+
     Route::livewire('quotes', 'pages::admin.quotes.index')->name('admin.quotes.index');
     Route::livewire('quotes/{quoteRequest}', 'pages::admin.quotes.show')->name('admin.quotes.show');
 

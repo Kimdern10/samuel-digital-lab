@@ -1,7 +1,10 @@
 <?php
 
 use App\Enums\QuoteStatus;
+use App\Models\Post;
 use App\Models\QuoteRequest;
+use App\Models\Setting;
+use App\Models\Testimonial;
 use App\Models\Work;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
@@ -22,6 +25,81 @@ new #[Title('Dashboard')] class extends Component {
             'total_quotes' => QuoteRequest::query()->count(),
             'published_works' => Work::query()->published()->count(),
             'draft_works' => Work::query()->where('is_published', false)->count(),
+        ];
+    }
+
+    /**
+     * What is still worth doing before and after the website goes live.
+     *
+     * @return list<array{done: bool, title: string, hint: string, url: string}>
+     */
+    #[Computed]
+    public function checklist(): array
+    {
+        $settings = Setting::values();
+        $publishedWorks = Work::query()->published();
+
+        return [
+            [
+                'done' => auth()->user()?->two_factor_confirmed_at !== null,
+                'title' => __('Turn on two-step login'),
+                'hint' => __('Keeps your admin safe even if someone learns your password.'),
+                'url' => route('security.edit'),
+            ],
+            [
+                'done' => ! str_contains($settings['speed_card_url'], 'example.'),
+                'title' => __('Show real speed scores on the home page'),
+                'hint' => __('Website content → Speed report card → Get my real scores from Google.'),
+                'url' => route('admin.content'),
+            ],
+            [
+                'done' => (clone $publishedWorks)->count() >= 3,
+                'title' => __('Add at least 3 works'),
+                'hint' => __('Clients want to see a few real projects before they call.'),
+                'url' => route('admin.works.index'),
+            ],
+            [
+                'done' => (clone $publishedWorks)->count() > 0 && (clone $publishedWorks)->whereNull('live_url')->doesntExist(),
+                'title' => __('Add the domain of every work'),
+                'hint' => __('Shows the website name and a live preview on each project.'),
+                'url' => route('admin.works.index'),
+            ],
+            [
+                'done' => Testimonial::query()->visible()->exists(),
+                'title' => __('Add a testimonial'),
+                'hint' => __('A sentence or two from a happy client builds trust fast.'),
+                'url' => route('admin.testimonials'),
+            ],
+            [
+                'done' => Post::query()->published()->exists(),
+                'title' => __('Publish your first article'),
+                'hint' => __('A draft about website prices is ready for you to check.'),
+                'url' => route('admin.posts.index'),
+            ],
+            [
+                'done' => collect(['facebook_url', 'instagram_url', 'x_url', 'linkedin_url', 'tiktok_url'])->contains(fn (string $key): bool => filled($settings[$key])),
+                'title' => __('Add your social media links'),
+                'hint' => __('Shown in the footer and to Google.'),
+                'url' => route('admin.settings'),
+            ],
+            [
+                'done' => filled($settings['google_analytics_id']),
+                'title' => __('Turn on visitor statistics'),
+                'hint' => __('See how many people visit and what they read.'),
+                'url' => route('admin.settings'),
+            ],
+            [
+                'done' => filled($settings['privacy_policy']),
+                'title' => __('Check and save your privacy policy'),
+                'hint' => __('A starter version is ready; make sure it is true for you.'),
+                'url' => route('admin.settings'),
+            ],
+            [
+                'done' => ! in_array(config('mail.default'), ['log', 'array'], true),
+                'title' => __('Set up real email sending'),
+                'hint' => __('Done on your hosting (MAIL_ settings in .env) so quote emails reach your inbox.'),
+                'url' => route('admin.settings'),
+            ],
         ];
     }
 
@@ -84,6 +162,41 @@ new #[Title('Dashboard')] class extends Component {
             <flux:heading size="xl" class="mt-2 font-mono">{{ $this->stats['draft_works'] }}</flux:heading>
         </flux:card>
     </div>
+
+    @php($done = collect($this->checklist)->where('done', true)->count())
+    @if ($done < count($this->checklist))
+        <flux:card class="grid gap-4" data-test="launch-checklist">
+            <div class="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                    <flux:heading size="lg" level="2">{{ __('Launch checklist') }}</flux:heading>
+                    <flux:text class="mt-1">{{ __('Things that make your website win more clients. They tick themselves off as you do them.') }}</flux:text>
+                </div>
+                <flux:badge color="green">{{ __(':done of :total done', ['done' => $done, 'total' => count($this->checklist)]) }}</flux:badge>
+            </div>
+            <div class="h-2 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
+                <div class="h-full rounded-full bg-[#0b7a4b]" style="width: {{ round($done / count($this->checklist) * 100) }}%"></div>
+            </div>
+            <ul class="grid gap-1">
+                @foreach ($this->checklist as $item)
+                    <li wire:key="check-{{ $loop->index }}">
+                        <a href="{{ $item['url'] }}" wire:navigate class="flex items-start gap-3 rounded-lg p-2 hover:bg-zinc-50 dark:hover:bg-zinc-800/60">
+                            @if ($item['done'])
+                                <flux:icon.check-circle variant="solid" class="mt-0.5 size-5 flex-none text-[#0b7a4b] dark:text-emerald-400" />
+                            @else
+                                <span class="mt-0.5 size-5 flex-none rounded-full border-2 border-zinc-300 dark:border-zinc-600"></span>
+                            @endif
+                            <span class="min-w-0">
+                                <span class="block text-sm font-medium {{ $item['done'] ? 'text-zinc-400 line-through' : '' }}">{{ $item['title'] }}</span>
+                                @unless ($item['done'])
+                                    <span class="block text-sm text-zinc-500">{{ $item['hint'] }}</span>
+                                @endunless
+                            </span>
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        </flux:card>
+    @endif
 
     <div>
         <div class="mb-3 flex items-center justify-between">

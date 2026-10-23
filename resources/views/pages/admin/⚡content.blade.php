@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Setting;
+use App\Support\PageSpeed;
 use Flux\Flux;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -57,6 +58,38 @@ new #[Title('Website content')] class extends Component {
         if (count($this->rows[$list]) < self::ROW_LISTS[$list]['max']) {
             $this->rows[$list][] = self::ROW_LISTS[$list]['template'];
         }
+    }
+
+    /**
+     * Fill the speed card with real Google PageSpeed results for the website on the card.
+     */
+    public function fetchSpeedScores(): void
+    {
+        $domain = trim($this->content['speed_card_url'] ?? '');
+
+        if ($domain === '' || str_contains($domain, 'example.')) {
+            $this->addError('content.speed_card_url', __('Type the domain of a website you built first, e.g. briefmediablog.com.'));
+
+            return;
+        }
+
+        $url = preg_match('#^https?://#i', $domain) ? $domain : 'https://'.$domain;
+
+        set_time_limit(120);
+
+        try {
+            $result = PageSpeed::run($url);
+        } catch (\RuntimeException $exception) {
+            $this->addError('content.speed_card_url', $exception->getMessage());
+
+            return;
+        }
+
+        $this->content['speed_card_url'] = (string) (parse_url($url, PHP_URL_HOST) ?: $domain);
+        $this->speedScores = $result['scores'];
+        $this->rows['stats'] = $result['stats'];
+
+        Flux::toast(variant: 'success', text: __('Real scores loaded from Google. Press Save to show them on your website.'));
     }
 
     /**
@@ -151,11 +184,18 @@ new #[Title('Website content')] class extends Component {
         <flux:card class="grid gap-5">
             <div>
                 <flux:heading size="lg">{{ __('Speed report card') }}</flux:heading>
-                <flux:text class="mt-1">{{ __('The Google PageSpeed card beside the heading. Use real scores from pagespeed.web.dev.') }}</flux:text>
+                <flux:text class="mt-1">{{ __('The Google PageSpeed card beside the heading. Type the domain of a website you built, then get its real scores from Google.') }}</flux:text>
             </div>
             <div class="grid gap-5 sm:grid-cols-2">
-                <flux:input wire:model="content.speed_card_url" :label="__('Website shown on the card')" />
+                <flux:input wire:model="content.speed_card_url" :label="__('Website shown on the card')" placeholder="briefmediablog.com" />
                 <flux:input wire:model="content.speed_card_footer" :label="__('Line at the bottom')" />
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+                <flux:button icon="bolt" wire:click="fetchSpeedScores" wire:loading.attr="disabled" wire:target="fetchSpeedScores" data-test="fetch-speed">
+                    <span wire:loading.remove wire:target="fetchSpeedScores">{{ __('Get my real scores from Google') }}</span>
+                    <span wire:loading wire:target="fetchSpeedScores">{{ __('Testing the website… this takes up to a minute') }}</span>
+                </flux:button>
+                <flux:text class="text-sm">{{ __('Fills in the scores and numbers below. Then press Save.') }}</flux:text>
             </div>
             <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 @foreach ($speedScores as $index => $score)
@@ -245,10 +285,12 @@ new #[Title('Website content')] class extends Component {
         </flux:card>
 
         <flux:card class="grid gap-5">
-            <flux:heading size="lg">{{ __('Testimonials and questions') }}</flux:heading>
+            <flux:heading size="lg">{{ __('Testimonials, blog and questions') }}</flux:heading>
             <div class="grid gap-5 sm:grid-cols-2">
                 <flux:input wire:model="content.testimonials_eyebrow" :label="__('Testimonials small label')" />
                 <flux:input wire:model="content.testimonials_title" :label="__('Testimonials heading')" />
+                <flux:input wire:model="content.blog_eyebrow" :label="__('Blog small label')" />
+                <flux:input wire:model="content.blog_title" :label="__('Blog heading on the home page')" />
                 <flux:input wire:model="content.faq_eyebrow" :label="__('Questions small label')" />
                 <flux:input wire:model="content.faq_title" :label="__('Questions heading')" />
             </div>
@@ -256,6 +298,8 @@ new #[Title('Website content')] class extends Component {
                 <flux:link :href="route('admin.testimonials')" wire:navigate>{{ __('Edit testimonials →') }}</flux:link>
                 <span class="mx-2">·</span>
                 <flux:link :href="route('admin.faqs')" wire:navigate>{{ __('Edit questions →') }}</flux:link>
+                <span class="mx-2">·</span>
+                <flux:link :href="route('admin.posts.index')" wire:navigate>{{ __('Write articles →') }}</flux:link>
             </flux:text>
         </flux:card>
 

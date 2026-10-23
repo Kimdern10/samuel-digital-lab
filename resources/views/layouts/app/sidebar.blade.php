@@ -21,6 +21,9 @@
                     <flux:sidebar.item icon="photo" :href="route('admin.works.index')" :current="request()->routeIs('admin.works.*')" wire:navigate>
                         {{ __('Our work') }}
                     </flux:sidebar.item>
+                    <flux:sidebar.item icon="newspaper" :href="route('admin.posts.index')" :current="request()->routeIs('admin.posts.*')" wire:navigate>
+                        {{ __('Blog') }}
+                    </flux:sidebar.item>
                 </flux:sidebar.group>
 
                 <flux:sidebar.group :heading="__('Home page')" class="grid">
