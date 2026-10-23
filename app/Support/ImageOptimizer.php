@@ -19,6 +19,8 @@ class ImageOptimizer
 
     public const int SMALL_WIDTH = 800;
 
+    public const int LOGO_WIDTH = 600;
+
     public const int QUALITY = 80;
 
     /**
@@ -34,6 +36,18 @@ class ImageOptimizer
 
         Storage::disk('public')->put($path, $this->encode($source, self::LARGE_WIDTH));
         Storage::disk('public')->put(Str::replaceLast('.webp', '-sm.webp', $path), $this->encode($source, self::SMALL_WIDTH));
+
+        return $path;
+    }
+
+    /**
+     * Store a logo as a single WebP file (transparency kept) and return its path.
+     */
+    public function storeLogo(UploadedFile $file): string
+    {
+        $path = 'branding/logo-'.Str::lower((string) Str::ulid()).'.webp';
+
+        Storage::disk('public')->put($path, $this->encode($this->load($file), self::LOGO_WIDTH));
 
         return $path;
     }
@@ -90,6 +104,8 @@ class ImageOptimizer
         } elseif (! imageistruecolor($image)) {
             imagepalettetotruecolor($image);
         }
+
+        imagesavealpha($image, true);
 
         ob_start();
         imagewebp($image, null, self::QUALITY);

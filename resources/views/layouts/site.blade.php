@@ -43,9 +43,14 @@
             <meta name="twitter:card" content="summary">
         @endif
 
-        <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        @if ($logoUrl = \App\Models\Setting::logoUrl())
+            <link rel="icon" href="{{ $logoUrl }}" type="image/webp">
+            <link rel="apple-touch-icon" href="{{ $logoUrl }}">
+        @else
+            <link rel="icon" href="/favicon.ico" sizes="any">
+            <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+            <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        @endif
 
         <script>document.documentElement.classList.add('js'); try { var t = localStorage.getItem('sdl-theme'); if (t === 'light' || t === 'dark') { document.documentElement.dataset.theme = t; } } catch (e) {}</script>
 
@@ -60,7 +65,7 @@
 
         <header class="site-header">
             <div class="container">
-                <a class="brand" href="{{ route('home') }}"><span class="brand__mark" aria-hidden="true">SD</span> {{ $site['business_name'] }}</a>
+                <a class="brand" href="{{ route('home') }}" aria-label="{{ $site['business_name'] }} home"><x-site-logo /></a>
                 <nav class="site-nav" aria-label="Main">
                     @foreach ($links as $label => $href)
                         <a href="{{ $href }}" @if ($current === strtolower($label)) aria-current="page" @endif>{{ $label }}</a>
@@ -92,7 +97,7 @@
             <div class="container">
                 <div class="footer__grid">
                     <div class="footer__brand">
-                        <a class="brand" href="{{ route('home') }}"><span class="brand__mark" aria-hidden="true">SD</span> {{ $site['business_name'] }}</a>
+                        <a class="brand" href="{{ route('home') }}" aria-label="{{ $site['business_name'] }} home"><x-site-logo /></a>
                         <p>{{ $site['tagline'] }}</p>
                         <a class="btn btn--primary btn--sm" href="{{ $whatsApp }}" target="_blank" rel="noopener">Chat on WhatsApp <x-site-icon name="arrow-right" /></a>
                     </div>

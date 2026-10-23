@@ -3,7 +3,7 @@
 <x-layouts::site
     :title="$work->title"
     :description="$work->metaDescription()"
-    :image="$work->coverUrl()"
+    :image="$work->previewImageUrl(large: true)"
     type="article"
     current="work"
 >
@@ -37,8 +37,34 @@
     </section>
 
     <div class="container cover" style="margin-top: -72px; position: relative; z-index: 2">
+        @if ($work->live_url)
+            <div class="frame live" data-live-preview data-mode="desktop" data-reveal="zoom">
+                <div class="frame__bar">
+                    <i></i><i></i><i></i>
+                    <a class="frame__addr" href="{{ $work->live_url }}" target="_blank" rel="noopener">{{ $work->liveHost() }}</a>
+                    <span class="live__tools">
+                        @if ($work->allows_embed)
+                            <span class="live__badge">Live</span>
+                        @endif
+                        <button type="button" class="live__mode is-active" data-live-mode="desktop" aria-pressed="true">Desktop</button>
+                        <button type="button" class="live__mode" data-live-mode="phone" aria-pressed="false">Phone</button>
+                    </span>
+                </div>
+                <div class="live__viewport">
+                    @if ($work->allows_embed)
+                        <iframe class="live__frame" src="{{ $work->live_url }}" title="Live preview of {{ $work->title }}" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>
+                    @else
+                        <img class="live__shot" data-desktop="{{ $work->previewImageUrl(large: true) }}" data-phone="{{ \App\Support\LivePreview::screenshotUrl($work->live_url, 390, 844) }}" src="{{ $work->previewImageUrl(large: true) }}" alt="Screenshot of {{ $work->title }}" width="1600" height="1000" fetchpriority="high" decoding="async">
+                    @endif
+                </div>
+                <div class="live__foot">
+                    <span>{{ $work->allows_embed ? 'This is the real website. Scroll and click around inside it.' : 'Screenshot of the live website.' }}</span>
+                    <a class="link" href="{{ $work->live_url }}" target="_blank" rel="noopener">Open {{ $work->liveHost() }} ↗</a>
+                </div>
+            </div>
+        @else
         <div class="frame" data-reveal="zoom">
-            <div class="frame__bar"><i></i><i></i><i></i><span class="frame__addr">{{ $work->live_url ? parse_url($work->live_url, PHP_URL_HOST) : ($work->category ?: $work->title) }}</span></div>
+            <div class="frame__bar"><i></i><i></i><i></i><span class="frame__addr">{{ $work->category ?: $work->title }}</span></div>
             @if ($work->cover_path)
                 <img class="frame__shot" src="{{ $work->coverUrl() }}" srcset="{{ $work->coverThumbUrl() }} 800w, {{ $work->coverUrl() }} 1600w" sizes="(max-width: 1200px) 100vw, 1160px" alt="Screenshot of {{ $work->title }}" width="1600" height="1000" fetchpriority="high" decoding="async">
             @else
@@ -48,6 +74,7 @@
                 </div>
             @endif
         </div>
+        @endif
     </div>
 
     <section class="section">

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\LivePreview;
 use Database\Factories\WorkFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -25,6 +26,7 @@ use Illuminate\Support\Str;
  * @property list<array{value: string, label: string}>|null $results
  * @property list<string>|null $technologies
  * @property string|null $live_url
+ * @property bool $allows_embed
  * @property string|null $cover_path
  * @property list<string>|null $screenshots
  * @property string|null $seo_description
@@ -36,7 +38,7 @@ use Illuminate\Support\Str;
  */
 #[Fillable([
     'title', 'slug', 'client', 'category', 'summary', 'headline', 'description',
-    'highlights', 'results', 'technologies', 'live_url', 'cover_path', 'screenshots',
+    'highlights', 'results', 'technologies', 'live_url', 'allows_embed', 'cover_path', 'screenshots',
     'seo_description', 'is_published', 'is_featured', 'sort_order',
 ])]
 class Work extends Model
@@ -61,6 +63,7 @@ class Work extends Model
             'results' => 'array',
             'technologies' => 'array',
             'screenshots' => 'array',
+            'allows_embed' => 'boolean',
             'is_published' => 'boolean',
             'is_featured' => 'boolean',
             'sort_order' => 'integer',
@@ -111,6 +114,29 @@ class Work extends Model
     public function coverThumbUrl(): ?string
     {
         return $this->cover_path ? Storage::disk('public')->url(self::thumbPath($this->cover_path)) : null;
+    }
+
+    /**
+     * Get the picture shown for the work: the uploaded cover, or else an
+     * automatic screenshot of its live website.
+     */
+    public function previewImageUrl(bool $large = false): ?string
+    {
+        if ($this->cover_path) {
+            return $large ? $this->coverUrl() : $this->coverThumbUrl();
+        }
+
+        return $this->live_url ? LivePreview::screenshotUrl($this->live_url, $large ? 1600 : 800, $large ? 1000 : 500) : null;
+    }
+
+    /**
+     * Get the host name shown in the browser frame, e.g. "ezecatering.com.ng".
+     */
+    public function liveHost(): ?string
+    {
+        $host = $this->live_url ? parse_url($this->live_url, PHP_URL_HOST) : null;
+
+        return is_string($host) ? Str::after($host, 'www.') : null;
     }
 
     /**

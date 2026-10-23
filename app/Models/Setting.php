@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Key/value store for business details and the editable text on the home page.
@@ -37,6 +38,8 @@ class Setting extends Model
         'x_url' => '',
         'linkedin_url' => '',
         'tiktok_url' => '',
+        'logo_path' => '',
+        'logo_show_name' => '1',
 
         // Home page: search engines
         'seo_title' => 'Web design & development in Nigeria',
@@ -127,7 +130,7 @@ class Setting extends Model
      */
     public const array BUSINESS_KEYS = [
         'business_name', 'tagline', 'whatsapp_primary', 'whatsapp_secondary', 'email', 'city',
-        'facebook_url', 'instagram_url', 'x_url', 'linkedin_url', 'tiktok_url',
+        'facebook_url', 'instagram_url', 'x_url', 'linkedin_url', 'tiktok_url', 'logo_path', 'logo_show_name',
     ];
 
     private const string CACHE_KEY = 'site-settings';
@@ -151,6 +154,16 @@ class Setting extends Model
     public static function get(string $key): string
     {
         return self::values()[$key] ?? '';
+    }
+
+    /**
+     * Get the public URL of the uploaded logo, if there is one.
+     */
+    public static function logoUrl(): ?string
+    {
+        $path = self::get('logo_path');
+
+        return $path !== '' ? Storage::disk('public')->url($path) : null;
     }
 
     /**

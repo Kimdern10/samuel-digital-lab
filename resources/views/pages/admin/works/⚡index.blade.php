@@ -59,8 +59,8 @@ new #[Title('Our work')] class extends Component {
         <div class="grid gap-3">
             @foreach ($this->works as $work)
                 <div wire:key="work-{{ $work->id }}" class="flex flex-wrap items-center gap-4 rounded-xl border border-zinc-200 p-3 dark:border-zinc-700">
-                    @if ($work->cover_path)
-                        <img src="{{ $work->coverThumbUrl() }}" alt="" class="h-16 w-24 flex-none rounded-lg object-cover object-top">
+                    @if ($preview = $work->previewImageUrl())
+                        <img src="{{ $preview }}" alt="" class="h-16 w-24 flex-none rounded-lg object-cover object-top">
                     @else
                         <div class="flex h-16 w-24 flex-none items-center justify-center rounded-lg bg-zinc-100 text-xs text-zinc-500 dark:bg-zinc-800">{{ __('No cover') }}</div>
                     @endif

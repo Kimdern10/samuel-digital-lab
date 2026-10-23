@@ -197,6 +197,49 @@ document.addEventListener('click', (event) => {
     }
 });
 
+// Live preview of a project's website, scaled to fit, as a desktop or a phone
+document.querySelectorAll('[data-live-preview]').forEach((preview) => {
+    const viewport = preview.querySelector('.live__viewport');
+    const frame = preview.querySelector('.live__frame');
+    const shot = preview.querySelector('.live__shot');
+    const sizes = { desktop: [1280, 800], phone: [390, 780] };
+
+    const layout = () => {
+        const [width, height] = sizes[preview.dataset.mode] || sizes.desktop;
+        const available = viewport.clientWidth;
+        const scale = Math.min(1, available / width);
+
+        if (frame) {
+            viewport.style.setProperty('--live-scale', scale);
+            viewport.style.setProperty('--live-width', `${width}px`);
+            viewport.style.setProperty('--live-frame-height', `${height}px`);
+            viewport.style.setProperty('--live-left', `${Math.max(0, (available - width * scale) / 2)}px`);
+            viewport.style.setProperty('--live-height', `${Math.round(height * scale)}px`);
+        } else if (shot) {
+            viewport.style.setProperty('--live-height', preview.dataset.mode === 'phone' ? '640px' : `${Math.round(available * 0.625)}px`);
+        }
+    };
+
+    preview.querySelectorAll('[data-live-mode]').forEach((button) => {
+        button.addEventListener('click', () => {
+            preview.dataset.mode = button.dataset.liveMode;
+            preview.querySelectorAll('[data-live-mode]').forEach((other) => {
+                other.classList.toggle('is-active', other === button);
+                other.setAttribute('aria-pressed', String(other === button));
+            });
+
+            if (shot) {
+                shot.src = shot.dataset[button.dataset.liveMode] || shot.src;
+            }
+
+            layout();
+        });
+    });
+
+    layout();
+    window.addEventListener('resize', layout, { passive: true });
+});
+
 // Copy buttons, with a fallback that selects the text
 document.addEventListener('click', (event) => {
     const button = event.target.closest('[data-copy]');

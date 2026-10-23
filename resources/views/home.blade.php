@@ -179,9 +179,9 @@
             @if ($leadWork)
                 <div class="case">
                     <a class="frame" href="{{ route('work.show', $leadWork) }}" aria-label="View {{ $leadWork->title }}" data-reveal>
-                        <div class="frame__bar"><i></i><i></i><i></i><span class="frame__addr">{{ $leadWork->live_url ? parse_url($leadWork->live_url, PHP_URL_HOST) : $leadWork->title }}</span></div>
-                        @if ($leadWork->cover_path)
-                            <img class="frame__shot" src="{{ $leadWork->coverThumbUrl() }}" srcset="{{ $leadWork->coverThumbUrl() }} 800w, {{ $leadWork->coverUrl() }} 1600w" sizes="(max-width: 900px) 100vw, 620px" alt="Screenshot of {{ $leadWork->title }}" width="800" height="500" loading="lazy" decoding="async">
+                        <div class="frame__bar"><i></i><i></i><i></i><span class="frame__addr">{{ $leadWork->liveHost() ?? $leadWork->title }}</span></div>
+                        @if ($leadWork->previewImageUrl())
+                            <img class="frame__shot" src="{{ $leadWork->previewImageUrl() }}" srcset="{{ $leadWork->previewImageUrl() }} 800w, {{ $leadWork->previewImageUrl(large: true) }} 1600w" sizes="(max-width: 900px) 100vw, 620px" alt="Screenshot of {{ $leadWork->title }}" width="800" height="500" loading="lazy" decoding="async">
                         @else
                             <div class="mock" aria-hidden="true">
                                 <div class="mock__hero">{{ $leadWork->headline ?: $leadWork->title }}</div>

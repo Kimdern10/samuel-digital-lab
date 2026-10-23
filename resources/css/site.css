@@ -104,6 +104,11 @@ button { font: inherit; }
 .site-header.is-solid { background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: saturate(160%) blur(16px); -webkit-backdrop-filter: saturate(160%) blur(16px); border-bottom-color: var(--line); color: var(--ink); }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; letter-spacing: -.02em; text-decoration: none; white-space: nowrap; }
 .brand__mark { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; font-weight: 800; font-size: 14px; color: #fff; background: linear-gradient(135deg, #16a765, #0b7a4b 60%, #075a37); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25); flex: none; }
+.logo { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+/* An uploaded logo sits on a light chip so it stays readable on the dark and light backgrounds */
+.logo__img { height: 42px; width: auto; max-width: 190px; object-fit: contain; background: #fff; border-radius: 12px; padding: 4px 8px; box-shadow: 0 1px 2px rgba(0, 0, 0, .15); }
+.logo__name { overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 380px) { .logo__img { max-width: 140px; } }
 .site-nav { display: flex; align-items: center; gap: 4px; }
 .site-nav a { text-decoration: none; font-weight: 600; font-size: 15px; padding: 8px 14px; border-radius: 999px; opacity: .78; transition: opacity .2s, background-color .2s; }
 .site-nav a:hover, .site-nav a[aria-current="page"] { opacity: 1; background: color-mix(in srgb, currentColor 9%, transparent); }
@@ -269,6 +274,23 @@ a.frame:hover { transform: translateY(-6px) rotate(-.4deg); }
 .frame__addr { margin-left: 10px; font-size: 12.5px; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .frame__shot { aspect-ratio: 16 / 10; width: 100%; object-fit: cover; object-position: top; background: var(--tint); transition: transform .8s var(--ease); }
 a.frame:hover .frame__shot { transform: scale(1.03); }
+a.frame__addr { text-decoration: none; color: var(--muted); }
+a.frame__addr:hover { color: var(--ink); }
+
+/* Live preview of a project's website */
+.live__tools { margin-left: auto; display: flex; align-items: center; gap: 6px; flex: none; }
+.live__badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--brand); margin-right: 4px; }
+.live__badge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; animation: pulse 2s infinite; box-shadow: 0 0 0 4px rgba(34, 197, 94, .2); }
+.live__mode { border: 1px solid var(--line); background: var(--surface); color: var(--muted); border-radius: 999px; padding: 6px 12px; font: 600 12.5px/1 var(--font); cursor: pointer; }
+.live__mode.is-active { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.live__viewport { position: relative; overflow: hidden; background: var(--bg-soft); height: var(--live-height, 600px); transition: height .4s var(--ease); }
+.live__frame { position: absolute; top: 0; left: var(--live-left, 0); width: var(--live-width, 1280px); height: var(--live-frame-height, 800px); border: 0; background: #fff; transform: scale(var(--live-scale, 1)); transform-origin: 0 0; }
+.live__shot { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.live[data-mode="phone"] .live__shot { width: auto; max-width: 390px; margin: 0 auto; border-inline: 1px solid var(--line); }
+.live[data-mode="phone"] .live__frame { border-radius: 0; box-shadow: 0 0 0 1px var(--line); }
+.live__foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; padding: 12px 16px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--muted); background: var(--surface); }
+@media (max-width: 520px) { .live .frame__addr { display: none; } }
+
 .mock { padding: 20px; display: grid; gap: 14px; }
 .mock__hero { aspect-ratio: 16 / 8; border-radius: 14px; background: linear-gradient(135deg, #0d2a1c, #0b7a4b 55%, #f5b82e); display: flex; align-items: flex-end; padding: 20px; color: #fff; font-weight: 800; font-size: clamp(17px, 2.2vw, 24px); line-height: 1.15; letter-spacing: -.02em; }
 .mock__lines { display: grid; gap: 9px; }

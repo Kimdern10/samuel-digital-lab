@@ -1,13 +1,73 @@
 <?php
 
 use App\Models\Setting;
+use App\Support\ImageOptimizer;
 use Flux\Flux;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Livewire\WithFileUploads;
 
 new #[Title('Business details')] class extends Component {
+    use WithFileUploads;
+
     /** @var array<string, string> */
     public array $settings = [];
+
+    /** @var TemporaryUploadedFile|null */
+    public $logo = null;
+
+    public bool $showNameWithLogo = true;
+
+    /**
+     * Save a newly chosen logo straight away.
+     */
+    public function updatedLogo(ImageOptimizer $images): void
+    {
+        $this->validate(['logo' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:5120']], [
+            'logo.image' => 'The logo must be a picture (PNG, JPG or WebP).',
+            'logo.mimes' => 'The logo must be a PNG, JPG or WebP file. A PNG with a transparent background works best.',
+        ]);
+
+        $oldPath = Setting::get('logo_path');
+
+        Setting::put(['logo_path' => $images->storeLogo($this->logo)]);
+
+        if ($oldPath !== '') {
+            Storage::disk('public')->delete($oldPath);
+        }
+
+        $this->reset('logo');
+        $this->settings = Setting::values();
+
+        Flux::toast(variant: 'success', text: __('Logo saved. It now shows on your website and admin.'));
+    }
+
+    /**
+     * Go back to the "SD" mark.
+     */
+    public function removeLogo(): void
+    {
+        $oldPath = Setting::get('logo_path');
+
+        if ($oldPath !== '') {
+            Storage::disk('public')->delete($oldPath);
+        }
+
+        Setting::put(['logo_path' => '']);
+        $this->settings = Setting::values();
+
+        Flux::toast(variant: 'success', text: __('Logo removed.'));
+    }
+
+    /**
+     * Choose whether the business name shows beside the logo.
+     */
+    public function updatedShowNameWithLogo(): void
+    {
+        Setting::put(['logo_show_name' => $this->showNameWithLogo ? '1' : '0']);
+    }
 
     /**
      * Load the saved settings.
@@ -15,6 +75,7 @@ new #[Title('Business details')] class extends Component {
     public function mount(): void
     {
         $this->settings = Setting::values();
+        $this->showNameWithLogo = $this->settings['logo_show_name'] === '1';
     }
 
     /**
@@ -53,6 +114,33 @@ new #[Title('Business details')] class extends Component {
         <flux:heading size="xl" level="1">{{ __('Business details') }}</flux:heading>
         <flux:text class="mt-1">{{ __('Shown in the contact section, footer and WhatsApp button. Quote requests are emailed to the address below.') }}</flux:text>
     </div>
+
+    <flux:card class="grid gap-5">
+        <div>
+            <flux:heading size="lg">{{ __('Logo') }}</flux:heading>
+            <flux:text class="mt-1">{{ __('Shown at the top and bottom of your website, in the admin and on the browser tab. A PNG with a transparent background works best.') }}</flux:text>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-5">
+            <div class="flex h-20 min-w-20 items-center justify-center rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-700">
+                @if ($logoUrl = \App\Models\Setting::logoUrl())
+                    <img src="{{ $logoUrl }}" alt="{{ __('Current logo') }}" class="h-14 w-auto max-w-56 object-contain" data-test="current-logo">
+                @else
+                    <span class="flex size-12 items-center justify-center rounded-xl bg-[#0b7a4b] font-bold text-white">SD</span>
+                @endif
+            </div>
+            <div class="grid gap-2">
+                <flux:input type="file" wire:model="logo" accept="image/png,image/jpeg,image/webp" :aria-label="__('Upload a logo')" />
+                <div wire:loading wire:target="logo"><flux:text>{{ __('Uploading…') }}</flux:text></div>
+                @error('logo') <flux:text class="text-red-600! dark:text-red-400!">{{ $message }}</flux:text> @enderror
+                @if (\App\Models\Setting::logoUrl())
+                    <div><flux:button size="sm" variant="ghost" icon="trash" wire:click="removeLogo" wire:confirm="{{ __('Remove the logo and go back to the SD mark?') }}">{{ __('Remove logo') }}</flux:button></div>
+                @endif
+            </div>
+        </div>
+
+        <flux:switch wire:model.live="showNameWithLogo" :label="__('Show the business name beside the logo')" :description="__('Turn off if your logo already contains the name.')" />
+    </flux:card>
 
     <form wire:submit="save" class="flex flex-col gap-8">
         <flux:fieldset>

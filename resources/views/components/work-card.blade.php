@@ -2,8 +2,8 @@
 
 <a {{ $attributes->merge(['class' => 'work-card', 'href' => route('work.show', $work)]) }}>
     <div class="work-card__media">
-        @if ($work->cover_path)
-            <img class="work-card__img" src="{{ $work->coverThumbUrl() }}" alt="" width="800" height="500" loading="lazy" decoding="async">
+        @if ($preview = $work->previewImageUrl())
+            <img class="work-card__img" src="{{ $preview }}" alt="" width="800" height="500" loading="lazy" decoding="async">
         @else
             <div class="work-card__placeholder" aria-hidden="true">{{ $work->title }}</div>
         @endif

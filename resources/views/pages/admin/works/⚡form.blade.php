@@ -2,6 +2,7 @@
 
 use App\Models\Work;
 use App\Support\ImageOptimizer;
+use App\Support\LivePreview;
 use Flux\Flux;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -195,6 +196,11 @@ new #[Title('Work')] class extends Component {
     public function save(ImageOptimizer $images): void
     {
         $this->slug = Str::slug($this->slug ?: $this->title);
+        $this->live_url = trim($this->live_url);
+
+        if ($this->live_url !== '' && ! preg_match('#^https?://#i', $this->live_url)) {
+            $this->live_url = 'https://'.$this->live_url;
+        }
 
         $this->validate();
 
@@ -228,6 +234,7 @@ new #[Title('Work')] class extends Component {
                 fn (array $result): bool => $result['value'] !== '',
             )),
             'live_url' => $this->live_url ?: null,
+            'allows_embed' => $this->live_url !== '' && LivePreview::canEmbed($this->live_url),
             'seo_description' => $this->seo_description ?: null,
             'is_published' => $this->is_published,
             'is_featured' => $this->is_featured,
@@ -238,7 +245,11 @@ new #[Title('Work')] class extends Component {
 
         Storage::disk('public')->delete(array_values(array_diff($oldPaths, $work->imagePaths())));
 
-        Flux::toast(variant: 'success', text: __('Work saved.'));
+        Flux::toast(variant: 'success', text: match (true) {
+            $work->live_url === null => __('Work saved.'),
+            $work->allows_embed => __('Work saved. Visitors will see the live website on the project page.'),
+            default => __('Work saved. That website does not allow live previews, so visitors will see a screenshot of it.'),
+        });
 
         $this->redirectRoute('admin.works.index', navigate: true);
     }
@@ -284,7 +295,18 @@ new #[Title('Work')] class extends Component {
                 <flux:textarea wire:model="description" :label="__('Description')" :description="__('What the client needed and what you did. Leave a blank line between paragraphs.')" rows="6" />
                 <flux:textarea wire:model="highlights" :label="__('What we built')" :description="__('One feature per line. Shown with ticks.')" rows="4" />
                 <flux:input wire:model="technologies" :label="__('Technologies')" :description="__('Separate with commas, e.g. Laravel, MySQL, Tailwind CSS')" />
-                <flux:input wire:model="live_url" type="url" :label="__('Live website link')" placeholder="https://" />
+                <div class="grid gap-2">
+                    <flux:input wire:model="live_url" :label="__('Live website link')" placeholder="ezecatering.com.ng" :description="__('Type the domain. The project page shows a live preview of the website, and if you do not upload a cover, a screenshot of it is used automatically.')" />
+                    @if ($work?->live_url)
+                        <flux:text class="text-sm">
+                            @if ($work->allows_embed)
+                                <flux:badge size="sm" color="green">{{ __('Live preview on') }}</flux:badge> {{ __('Visitors can scroll the real website on the project page.') }}
+                            @else
+                                <flux:badge size="sm" color="zinc">{{ __('Screenshot preview') }}</flux:badge> {{ __('This website blocks being shown inside other sites, so a screenshot is shown instead.') }}
+                            @endif
+                        </flux:text>
+                    @endif
+                </div>
             </div>
         </flux:fieldset>
 
