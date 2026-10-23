@@ -47,7 +47,7 @@ body {
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
 }
-img { max-width: 100%; display: block; }
+img { max-width: 100%; height: auto; display: block; }
 .wrap {
     max-width: 1120px; margin: 0 auto;
     padding-left: max(16px, env(safe-area-inset-left, 0px));
@@ -98,7 +98,12 @@ a { color: inherit; }
     .mobile-nav::-webkit-scrollbar { display: none; }
     .mobile-nav a { flex: none; text-decoration: none; font-size: 14px; font-weight: 500; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; background: var(--surface); }
     .mobile-nav a[aria-current="page"] { color: var(--ink); border-color: var(--ink); }
+    .brand { font-size: 17px; white-space: nowrap; }
 }
+@media (max-width: 420px) {
+    .header-tools .btn { display: none; }
+}
+.btn { white-space: nowrap; }
 
 /* Hero */
 .hero .wrap { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 48px; align-items: center; padding-block: 40px 72px; }
@@ -162,7 +167,8 @@ section.band .wrap { padding-block: 72px; }
 
 /* Case study */
 .case { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 40px; align-items: start; }
-.browser { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.browser { display: block; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; text-decoration: none; }
+a.browser:hover { border-color: var(--accent); }
 .browser__bar { display: flex; align-items: center; gap: 6px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
 .browser__bar i { width: 10px; height: 10px; border-radius: 50%; background: var(--line); display: block; flex: none; }
 .browser__addr { margin-left: 10px; font: 400 12px/1 var(--mono); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -231,7 +237,7 @@ section.band .wrap { padding-block: 72px; }
 .lightbox { border: 0; padding: 0; margin: 0; width: 100vw; height: 100dvh; max-width: none; max-height: none; background: rgba(5, 10, 8, .94); color: #fff; }
 .lightbox::backdrop { background: rgba(5, 10, 8, .94); }
 .lightbox__stage { position: absolute; inset: 56px 0 64px; display: grid; place-items: center; overflow: auto; padding: 0 12px; }
-.lightbox__stage img { max-width: min(1600px, 100%); max-height: 100%; height: auto; object-fit: contain; border-radius: 8px; }
+.lightbox__stage img { width: auto; max-width: min(1600px, 100%); max-height: calc(100dvh - 128px); object-fit: contain; border-radius: 8px; }
 .lightbox__bar { position: absolute; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; }
 .lightbox__bar--top { top: 0; }
 .lightbox__bar--bottom { bottom: 0; justify-content: center; }

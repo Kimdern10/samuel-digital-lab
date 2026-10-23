@@ -42,7 +42,7 @@ class QuoteRequestReceived extends Mailable
         return new Content(
             markdown: 'mail.quote-request-received',
             with: [
-                'whatsAppUrl' => WhatsApp::link($this->quote->phone, "Hello {$this->quote->name}, thank you for your quote request on Samuel Digital Lab."),
+                'whatsAppUrl' => WhatsApp::link($this->quote->phone, "Hello {$this->quote->name}, thank you for asking about {$this->quote->service} on our website."),
                 'adminUrl' => route('admin.quotes.show', $this->quote),
             ],
         );

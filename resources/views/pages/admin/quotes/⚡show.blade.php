@@ -43,7 +43,7 @@ new #[Title('Quote request')] class extends Component {
     public function whatsAppUrl(): string
     {
         $business = Setting::get('business_name');
-        $message = "Hello {$this->quoteRequest->name}, this is {$business}. Thank you for your request for a {$this->quoteRequest->service}. When is a good time for a quick chat about it?";
+        $message = "Hello {$this->quoteRequest->name}, this is {$business}. Thank you for asking about {$this->quoteRequest->service} on our website. When is a good time for a quick chat about it?";
 
         return WhatsApp::link($this->quoteRequest->phone, $message);
     }

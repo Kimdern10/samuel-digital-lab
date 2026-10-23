@@ -151,7 +151,7 @@ new class extends Component {
                 <input id="q-name" wire:model="name" autocomplete="name" required @error('name') aria-invalid="true" aria-describedby="q-name-error" @enderror>
                 @error('name') <span class="field-error" id="q-name-error">{{ $message }}</span> @enderror
             </label>
-            <label for="q-business">Business <small>(optional)</small>
+            <label for="q-business"><span>Business <small>(optional)</small></span>
                 <input id="q-business" wire:model="business" autocomplete="organization">
                 @error('business') <span class="field-error">{{ $message }}</span> @enderror
             </label>
@@ -161,7 +161,7 @@ new class extends Component {
                 <input id="q-phone" type="tel" wire:model="phone" autocomplete="tel" inputmode="tel" placeholder="080..." required @error('phone') aria-invalid="true" aria-describedby="q-phone-error" @enderror>
                 @error('phone') <span class="field-error" id="q-phone-error">{{ $message }}</span> @enderror
             </label>
-            <label for="q-email">Email <small>(optional)</small>
+            <label for="q-email"><span>Email <small>(optional)</small></span>
                 <input id="q-email" type="email" wire:model="email" autocomplete="email" @error('email') aria-invalid="true" aria-describedby="q-email-error" @enderror>
                 @error('email') <span class="field-error" id="q-email-error">{{ $message }}</span> @enderror
             </label>

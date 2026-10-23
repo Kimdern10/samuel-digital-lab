@@ -332,7 +332,9 @@ new #[Title('Work')] class extends Component {
                             @foreach ($screenshots as $index => $path)
                                 <div class="relative" wire:key="saved-{{ $path }}">
                                     <img src="{{ Storage::disk('public')->url(\App\Models\Work::thumbPath($path)) }}" alt="" class="aspect-[4/3] w-full rounded-lg border border-zinc-200 object-cover object-top dark:border-zinc-700">
-                                    <flux:button size="xs" variant="danger" icon="x-mark" class="absolute end-2 top-2" wire:click="removeScreenshot({{ $index }})" :aria-label="__('Remove screenshot')" />
+                                    <div class="absolute end-2 top-2">
+                                        <flux:button size="xs" variant="danger" icon="x-mark" wire:click="removeScreenshot({{ $index }})" :aria-label="__('Remove screenshot')" />
+                                    </div>
                                 </div>
                             @endforeach
                             @foreach ($newScreenshots as $index => $file)
@@ -340,8 +342,12 @@ new #[Title('Work')] class extends Component {
                                     @if ($file->isPreviewable())
                                         <img src="{{ $file->temporaryUrl() }}" alt="" class="aspect-[4/3] w-full rounded-lg border border-amber-400 object-cover object-top">
                                     @endif
-                                    <flux:badge size="sm" color="amber" class="absolute start-2 top-2">{{ __('New') }}</flux:badge>
-                                    <flux:button size="xs" variant="danger" icon="x-mark" class="absolute end-2 top-2" wire:click="removeNewScreenshot({{ $index }})" :aria-label="__('Remove screenshot')" />
+                                    <div class="absolute start-2 top-2">
+                                        <flux:badge size="sm" color="amber">{{ __('New') }}</flux:badge>
+                                    </div>
+                                    <div class="absolute end-2 top-2">
+                                        <flux:button size="xs" variant="danger" icon="x-mark" wire:click="removeNewScreenshot({{ $index }})" :aria-label="__('Remove screenshot')" />
+                                    </div>
                                 </div>
                             @endforeach
                         </div>

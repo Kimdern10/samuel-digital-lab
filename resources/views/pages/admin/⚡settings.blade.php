@@ -69,7 +69,9 @@ new #[Title('Business details')] class extends Component {
             <div class="grid gap-5 sm:grid-cols-2">
                 <flux:input wire:model="settings.whatsapp_primary" :label="__('Main WhatsApp number')" inputmode="tel" required />
                 <flux:input wire:model="settings.whatsapp_secondary" :label="__('Second WhatsApp number')" inputmode="tel" />
-                <flux:input wire:model="settings.email" type="email" :label="__('Email')" :description="__('Quote requests are sent here.')" class="sm:col-span-2" required />
+                <div class="sm:col-span-2">
+                    <flux:input wire:model="settings.email" type="email" :label="__('Email')" :description="__('Quote requests are sent here.')" required />
+                </div>
             </div>
         </flux:fieldset>
 
