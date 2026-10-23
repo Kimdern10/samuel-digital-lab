@@ -106,6 +106,53 @@ test('removing a screenshot or replacing the cover deletes the old files', funct
     Storage::disk('public')->assertExists([$keptShot, $work->cover_path]);
 });
 
+test('the admin can remove the cover picture', function () {
+    Livewire::test('pages::admin.works.form')
+        ->set('title', 'Shop')
+        ->set('cover', UploadedFile::fake()->image('cover.jpg'))
+        ->call('save');
+
+    $work = Work::query()->sole();
+    $cover = $work->cover_path;
+
+    Livewire::test('pages::admin.works.form', ['work' => $work])
+        ->call('removeCoverImage')
+        ->assertSet('removeCover', true)
+        ->assertSee('The cover will be deleted when you save.')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect($work->refresh()->cover_path)->toBeNull();
+    Storage::disk('public')->assertMissing([$cover, Work::thumbPath($cover)]);
+});
+
+test('removing the cover can be undone before saving', function () {
+    $work = Work::factory()->create(['cover_path' => 'works/cover.webp']);
+    Storage::disk('public')->put('works/cover.webp', 'x');
+
+    Livewire::test('pages::admin.works.form', ['work' => $work])
+        ->call('removeCoverImage')
+        ->call('keepCover')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect($work->refresh()->cover_path)->toBe('works/cover.webp');
+    Storage::disk('public')->assertExists('works/cover.webp');
+});
+
+test('a newly chosen cover can be discarded before saving', function () {
+    $work = Work::factory()->create(['cover_path' => 'works/cover.webp']);
+
+    Livewire::test('pages::admin.works.form', ['work' => $work])
+        ->set('cover', UploadedFile::fake()->image('wrong.jpg'))
+        ->call('removeCoverImage')
+        ->assertSet('cover', null)
+        ->assertSet('removeCover', false)
+        ->call('save');
+
+    expect($work->refresh()->cover_path)->toBe('works/cover.webp');
+});
+
 test('the admin can unpublish and delete a work', function () {
     $work = Work::factory()->create(['cover_path' => 'works/cover.webp']);
     Storage::disk('public')->put('works/cover.webp', 'x');

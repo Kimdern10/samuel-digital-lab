@@ -51,6 +51,8 @@ new #[Title('Work')] class extends Component {
     /** @var TemporaryUploadedFile|null */
     public $cover = null;
 
+    public bool $removeCover = false;
+
     /** @var array<int, TemporaryUploadedFile> */
     public array $newScreenshots = [];
 
@@ -123,6 +125,37 @@ new #[Title('Work')] class extends Component {
     {
         unset($this->results[$index]);
         $this->results = array_values($this->results);
+    }
+
+    /**
+     * Discard a newly chosen cover, or mark the saved cover for removal when the work is saved.
+     */
+    public function removeCoverImage(): void
+    {
+        if ($this->cover) {
+            $this->reset('cover');
+            $this->resetValidation('cover');
+
+            return;
+        }
+
+        $this->removeCover = true;
+    }
+
+    /**
+     * Keep the saved cover after all.
+     */
+    public function keepCover(): void
+    {
+        $this->removeCover = false;
+    }
+
+    /**
+     * A newly chosen cover replaces any removal.
+     */
+    public function updatedCover(): void
+    {
+        $this->removeCover = false;
     }
 
     /**
@@ -207,7 +240,7 @@ new #[Title('Work')] class extends Component {
         $work = $this->work ?? new Work;
         $oldPaths = $work->exists ? $work->imagePaths() : [];
 
-        $coverPath = $work->cover_path;
+        $coverPath = $this->removeCover ? null : $work->cover_path;
 
         if ($this->cover) {
             $coverPath = $images->store($this->cover);
@@ -334,15 +367,36 @@ new #[Title('Work')] class extends Component {
                     <flux:input type="file" wire:model="cover" accept="image/jpeg,image/png,image/webp" :label="__('Cover image')" :description="__('A screenshot of the home page works best. Shown on cards and at the top of the project page.')" />
                     <div wire:loading wire:target="cover"><flux:text>{{ __('Uploading…') }}</flux:text></div>
                     @if ($cover && $cover->isPreviewable() && ! $errors->has('cover'))
-                        <img src="{{ $cover->temporaryUrl() }}" alt="" class="aspect-[16/10] w-64 rounded-lg border border-zinc-200 object-cover object-top dark:border-zinc-700">
-                    @elseif ($work?->cover_path)
-                        <img src="{{ $work->coverThumbUrl() }}" alt="" class="aspect-[16/10] w-64 rounded-lg border border-zinc-200 object-cover object-top dark:border-zinc-700">
+                        <div class="relative w-72">
+                            <img src="{{ $cover->temporaryUrl() }}" alt="" class="aspect-[16/10] w-full rounded-lg border border-amber-400 bg-zinc-50 object-contain dark:bg-zinc-800">
+                            <div class="absolute start-2 top-2"><flux:badge size="sm" color="amber">{{ __('New') }}</flux:badge></div>
+                            <div class="absolute end-2 top-2">
+                                <flux:button size="xs" variant="danger" icon="x-mark" wire:click="removeCoverImage" :aria-label="__('Remove cover image')" data-test="remove-cover" />
+                            </div>
+                        </div>
+                    @elseif ($work?->cover_path && ! $removeCover)
+                        <div class="relative w-72">
+                            <img src="{{ $work->coverThumbUrl() }}" alt="" class="aspect-[16/10] w-full rounded-lg border border-zinc-200 bg-zinc-50 object-contain dark:border-zinc-700 dark:bg-zinc-800">
+                            <div class="absolute end-2 top-2">
+                                <flux:button size="xs" variant="danger" icon="x-mark" wire:click="removeCoverImage" :aria-label="__('Remove cover image')" data-test="remove-cover" />
+                            </div>
+                        </div>
+                    @elseif ($removeCover)
+                        <flux:callout icon="trash" color="amber" class="max-w-lg">
+                            <flux:callout.text>
+                                {{ __('The cover will be deleted when you save.') }}
+                                @if ($work?->live_url)
+                                    {{ __('A screenshot of the website will be shown instead.') }}
+                                @endif
+                                <flux:link class="cursor-pointer" wire:click="keepCover">{{ __('Undo') }}</flux:link>
+                            </flux:callout.text>
+                        </flux:callout>
                     @endif
                 </div>
 
                 <div class="grid gap-3">
                     @if (count($screenshots) + count($newScreenshots) < \App\Models\Work::MAX_SCREENSHOTS)
-                        <flux:input type="file" wire:model="newScreenshots" multiple accept="image/jpeg,image/png,image/webp" :label="__('Screenshots (up to :max)', ['max' => \App\Models\Work::MAX_SCREENSHOTS])" :description="__('Pages, phone views and the admin panel. Visitors can tap to enlarge.')" />
+                        <flux:input type="file" wire:model="newScreenshots" multiple accept="image/jpeg,image/png,image/webp" :label="__('Screenshots (up to :max)', ['max' => \App\Models\Work::MAX_SCREENSHOTS])" :description="__('Pages, phone views and the admin panel. Visitors can tap to enlarge. Press × on a picture to remove it.')" />
                     @else
                         <flux:text>{{ __('This work has the most screenshots allowed (:max). Remove one to add another.', ['max' => \App\Models\Work::MAX_SCREENSHOTS]) }}</flux:text>
                     @endif
@@ -353,7 +407,7 @@ new #[Title('Work')] class extends Component {
                         <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
                             @foreach ($screenshots as $index => $path)
                                 <div class="relative" wire:key="saved-{{ $path }}">
-                                    <img src="{{ Storage::disk('public')->url(\App\Models\Work::thumbPath($path)) }}" alt="" class="aspect-[4/3] w-full rounded-lg border border-zinc-200 object-cover object-top dark:border-zinc-700">
+                                    <img src="{{ Storage::disk('public')->url(\App\Models\Work::thumbPath($path)) }}" alt="" class="aspect-[4/3] w-full rounded-lg border border-zinc-200 bg-zinc-50 object-contain dark:border-zinc-700 dark:bg-zinc-800">
                                     <div class="absolute end-2 top-2">
                                         <flux:button size="xs" variant="danger" icon="x-mark" wire:click="removeScreenshot({{ $index }})" :aria-label="__('Remove screenshot')" />
                                     </div>
@@ -362,7 +416,7 @@ new #[Title('Work')] class extends Component {
                             @foreach ($newScreenshots as $index => $file)
                                 <div class="relative" wire:key="new-{{ $index }}-{{ $file->getFilename() }}">
                                     @if ($file->isPreviewable())
-                                        <img src="{{ $file->temporaryUrl() }}" alt="" class="aspect-[4/3] w-full rounded-lg border border-amber-400 object-cover object-top">
+                                        <img src="{{ $file->temporaryUrl() }}" alt="" class="aspect-[4/3] w-full rounded-lg border border-amber-400 bg-zinc-50 object-contain dark:bg-zinc-800">
                                     @endif
                                     <div class="absolute start-2 top-2">
                                         <flux:badge size="sm" color="amber">{{ __('New') }}</flux:badge>
