@@ -10,7 +10,7 @@
     @if ($logoUrl)
         <img class="logo__img" src="{{ $logoUrl }}" alt="{{ $withName ? '' : $site['business_name'] }}" height="40">
     @else
-        <span class="brand__mark" aria-hidden="true">SD</span>
+        <img class="brand__mark" src="{{ asset('brand/logo-icon.svg') }}" alt="" width="40" height="40">
     @endif
     @if ($withName)
         <span class="logo__name">{{ $site['business_name'] }}</span>

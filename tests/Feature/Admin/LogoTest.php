@@ -42,7 +42,7 @@ test('uploading a new logo replaces the old file and the logo can be removed', f
 
     expect(Setting::logoUrl())->toBeNull();
     Storage::disk('public')->assertMissing($second);
-    $this->get(route('home'))->assertSee('brand__mark', escape: false);
+    $this->get(route('home'))->assertSee('brand/logo-icon.svg', escape: false);
 });
 
 test('the logo must be a picture', function () {

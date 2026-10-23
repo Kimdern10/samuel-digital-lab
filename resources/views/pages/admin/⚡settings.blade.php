@@ -126,7 +126,7 @@ new #[Title('Business details')] class extends Component {
                 @if ($logoUrl = \App\Models\Setting::logoUrl())
                     <img src="{{ $logoUrl }}" alt="{{ __('Current logo') }}" class="h-14 w-auto max-w-56 object-contain" data-test="current-logo">
                 @else
-                    <span class="flex size-12 items-center justify-center rounded-xl bg-[#0b7a4b] font-bold text-white">SD</span>
+                    <img src="{{ asset('brand/logo-icon.svg') }}" alt="{{ __('Built-in logo') }}" class="size-12">
                 @endif
             </div>
             <div class="grid gap-2">
@@ -136,6 +136,15 @@ new #[Title('Business details')] class extends Component {
                 @if (\App\Models\Setting::logoUrl())
                     <div><flux:button size="sm" variant="ghost" icon="trash" wire:click="removeLogo" wire:confirm="{{ __('Remove the logo and go back to the SD mark?') }}">{{ __('Remove logo') }}</flux:button></div>
                 @endif
+            </div>
+        </div>
+
+        <div class="grid gap-2">
+            <flux:text>{{ __('Your logo files, for WhatsApp, flyers and social media:') }}</flux:text>
+            <div class="flex flex-wrap gap-2">
+                @foreach (['logo-full.png' => __('Full logo'), 'logo-full-white.png' => __('White, for dark backgrounds'), 'logo-stacked.png' => __('Stacked'), 'logo-icon-512.png' => __('Icon (profile picture)'), 'logo-icon.svg' => __('Icon (SVG)')] as $file => $label)
+                    <flux:button size="sm" icon="arrow-down-tray" :href="asset('brand/'.$file)" download>{{ $label }}</flux:button>
+                @endforeach
             </div>
         </div>
 

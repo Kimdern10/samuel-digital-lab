@@ -23,7 +23,7 @@
                     @if ($logoUrl)
                         <img src="{{ $logoUrl }}" alt="" class="h-11 w-auto max-w-48 rounded-xl bg-white object-contain px-2 py-1">
                     @else
-                        <span class="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#16a765] to-[#075a37] text-sm font-extrabold">SD</span>
+                        <img src="{{ asset('brand/logo-icon.svg') }}" alt="" class="size-10">
                     @endif
                     {{ $businessName }}
                 </a>
@@ -58,7 +58,7 @@
                         @if ($logoUrl)
                             <img src="{{ $logoUrl }}" alt="" class="h-11 w-auto max-w-48 rounded-xl bg-white object-contain px-2 py-1 ring-1 ring-zinc-200">
                         @else
-                            <span class="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#16a765] to-[#075a37] text-sm font-extrabold text-white">SD</span>
+                            <img src="{{ asset('brand/logo-icon.svg') }}" alt="" class="size-10">
                         @endif
                         {{ $businessName }}
                     </a>
