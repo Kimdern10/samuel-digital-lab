@@ -67,6 +67,23 @@ class Service extends Model
     }
 
     /**
+     * Pick an icon that matches the kind of service.
+     */
+    public function iconName(): string
+    {
+        $title = strtolower($this->title);
+
+        return match (true) {
+            str_contains($title, 'commerce') || str_contains($title, 'shop') || str_contains($title, 'store') => 'cart',
+            str_contains($title, 'blog') || str_contains($title, 'news') => 'newspaper',
+            str_contains($title, 'landing') => 'rocket',
+            str_contains($title, 'custom') || str_contains($title, 'app') => 'code',
+            str_contains($title, 'support') || str_contains($title, 'maintenance') => 'lifebuoy',
+            default => 'globe',
+        };
+    }
+
+    /**
      * Get the price as shown to visitors, e.g. "₦150,000" or "On quote".
      */
     public function formattedPrice(): string

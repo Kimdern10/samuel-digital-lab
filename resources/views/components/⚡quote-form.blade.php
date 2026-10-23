@@ -137,13 +137,14 @@ new class extends Component {
 }; ?>
 
 <form id="quote" class="quote-form" wire:submit="submit" novalidate>
-    <h3>Get a quote</h3>
+    <h3>{{ \App\Models\Setting::get('form_title') }}</h3>
 
     @if ($sent)
         <div class="sent" role="status">
+            <span class="sent__icon"><x-site-icon name="check" /></span>
             <strong>Thank you! Your request has been sent.</strong>
             <span>We'll reply on WhatsApp or by email within one working day.</span>
-            <button class="btn btn--ghost btn--sm" type="button" wire:click="$set('sent', false)" style="justify-self: start">Send another request</button>
+            <button class="btn btn--outline btn--sm" type="button" wire:click="$set('sent', false)">Send another request</button>
         </div>
     @else
         <div class="row2">
@@ -197,10 +198,13 @@ new class extends Component {
 
         @error('form') <p class="field-error" role="alert">{{ $message }}</p> @enderror
 
-        <button class="btn" type="submit" wire:loading.attr="disabled" wire:target="submit">
+        <button class="btn btn--primary btn--block" type="submit" wire:loading.attr="disabled" wire:target="submit">
             <span wire:loading.remove wire:target="submit">Send request</span>
             <span wire:loading wire:target="submit">Sending…</span>
+            <x-site-icon name="arrow-right" wire:loading.remove wire:target="submit" />
         </button>
-        <p class="form-note">We reply on WhatsApp or by email within one working day. Your details are only used to answer your request.</p>
+        @if (filled($formNote = \App\Models\Setting::get('form_note')))
+            <p class="form-note">{{ $formNote }}</p>
+        @endif
     @endif
 </form>

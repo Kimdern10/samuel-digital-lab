@@ -17,6 +17,9 @@ test('users who are not admins cannot open the admin', function (string $routeNa
     'admin.quotes.index',
     'admin.services',
     'admin.settings',
+    'admin.content',
+    'admin.testimonials',
+    'admin.faqs',
 ]);
 
 test('the admin can open every admin page', function (string $routeName) {
@@ -30,6 +33,9 @@ test('the admin can open every admin page', function (string $routeName) {
     'admin.quotes.index',
     'admin.services',
     'admin.settings',
+    'admin.content',
+    'admin.testimonials',
+    'admin.faqs',
 ]);
 
 test('public registration is turned off', function () {

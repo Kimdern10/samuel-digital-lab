@@ -15,14 +15,26 @@
                     <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="photo" :href="route('admin.works.index')" :current="request()->routeIs('admin.works.*')" wire:navigate>
-                        {{ __('Our work') }}
-                    </flux:sidebar.item>
                     <flux:sidebar.item icon="inbox" :href="route('admin.quotes.index')" :current="request()->routeIs('admin.quotes.*')" :badge="\App\Models\QuoteRequest::query()->where('status', \App\Enums\QuoteStatus::New)->count() ?: null" wire:navigate>
                         {{ __('Quote requests') }}
                     </flux:sidebar.item>
+                    <flux:sidebar.item icon="photo" :href="route('admin.works.index')" :current="request()->routeIs('admin.works.*')" wire:navigate>
+                        {{ __('Our work') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
+
+                <flux:sidebar.group :heading="__('Home page')" class="grid">
+                    <flux:sidebar.item icon="pencil-square" :href="route('admin.content')" :current="request()->routeIs('admin.content')" wire:navigate>
+                        {{ __('Website content') }}
+                    </flux:sidebar.item>
                     <flux:sidebar.item icon="tag" :href="route('admin.services')" :current="request()->routeIs('admin.services')" wire:navigate>
                         {{ __('Services & prices') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="chat-bubble-bottom-center-text" :href="route('admin.testimonials')" :current="request()->routeIs('admin.testimonials')" wire:navigate>
+                        {{ __('Testimonials') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="question-mark-circle" :href="route('admin.faqs')" :current="request()->routeIs('admin.faqs')" wire:navigate>
+                        {{ __('Questions') }}
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="cog-6-tooth" :href="route('admin.settings')" :current="request()->routeIs('admin.settings')" wire:navigate>
                         {{ __('Business details') }}
