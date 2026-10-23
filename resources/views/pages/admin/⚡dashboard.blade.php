@@ -43,7 +43,27 @@ new #[Title('Dashboard')] class extends Component {
             <flux:heading size="xl" level="1">{{ __('Welcome back, :name', ['name' => auth()->user()->name]) }}</flux:heading>
             <flux:text class="mt-1">{{ __('Here is what is happening on your website.') }}</flux:text>
         </div>
-        <flux:button variant="primary" icon="plus" :href="route('admin.works.create')" wire:navigate>{{ __('Add a work') }}</flux:button>
+        <div class="flex flex-wrap gap-2">
+            <flux:button icon="arrow-top-right-on-square" :href="route('home')" target="_blank">{{ __('View website') }}</flux:button>
+            <flux:button variant="primary" icon="plus" :href="route('admin.works.create')" wire:navigate>{{ __('Add a work') }}</flux:button>
+        </div>
+    </div>
+
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        @foreach ([
+            ['route' => 'admin.content', 'icon' => 'pencil-square', 'title' => __('Website content'), 'text' => __('Headings and text on the home page')],
+            ['route' => 'admin.services', 'icon' => 'tag', 'title' => __('Services & prices'), 'text' => __('The service cards and prices')],
+            ['route' => 'admin.testimonials', 'icon' => 'chat-bubble-bottom-center-text', 'title' => __('Testimonials'), 'text' => __('What clients say about you')],
+            ['route' => 'admin.settings', 'icon' => 'cog-6-tooth', 'title' => __('Business details'), 'text' => __('Logo, WhatsApp, email and socials')],
+        ] as $shortcut)
+            <a href="{{ route($shortcut['route']) }}" wire:navigate class="group flex items-start gap-3 rounded-xl border border-zinc-200 p-4 transition hover:border-[#0b7a4b] hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-800/60">
+                <span class="flex size-10 flex-none items-center justify-center rounded-lg bg-emerald-50 text-[#0b7a4b] dark:bg-emerald-900/30 dark:text-emerald-400"><flux:icon :name="$shortcut['icon']" class="size-5" /></span>
+                <span>
+                    <span class="block font-medium">{{ $shortcut['title'] }}</span>
+                    <span class="block text-sm text-zinc-500">{{ $shortcut['text'] }}</span>
+                </span>
+            </a>
+        @endforeach
     </div>
 
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

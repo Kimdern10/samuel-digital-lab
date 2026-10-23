@@ -72,6 +72,20 @@ test('a published work has its own page', function () {
         ->assertSee('data-lightbox-src', escape: false);
 });
 
+test('each work shows the domain of its website', function () {
+    $work = Work::factory()->create(['live_url' => 'https://www.ezecatering.com.ng']);
+
+    $this->get(route('work.index'))->assertSee('ezecatering.com.ng');
+    $this->get(route('work.show', $work))->assertSee('ezecatering.com.ng');
+});
+
+test('a missing page shows the branded not found page', function () {
+    $this->get('/this-page-does-not-exist')
+        ->assertNotFound()
+        ->assertSee('This page is')
+        ->assertSee('Go to the home page');
+});
+
 test('a draft work cannot be opened by visitors', function () {
     $work = Work::factory()->draft()->create();
 

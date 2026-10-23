@@ -16,6 +16,9 @@
         @if ($work->summary)
             <p>{{ $work->summary }}</p>
         @endif
+        @if ($work->liveHost())
+            <span class="work-card__domain"><x-site-icon name="globe" /> {{ $work->liveHost() }}</span>
+        @endif
         @if (! empty($work->results[0]['value']))
             <span class="work-card__result">{{ $work->results[0]['value'] }} · {{ $work->results[0]['label'] ?? '' }}</span>
         @endif

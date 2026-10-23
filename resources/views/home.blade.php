@@ -194,6 +194,9 @@
                             <span class="work-card__tag">{{ $leadWork->category }}</span>
                         @endif
                         <h3>{{ $leadWork->title }}</h3>
+                        @if ($leadWork->liveHost())
+                            <a class="work-card__domain" href="{{ $leadWork->live_url }}" target="_blank" rel="noopener"><x-site-icon name="globe" /> {{ $leadWork->liveHost() }} ↗</a>
+                        @endif
                         @if ($leadWork->summary)
                             <p>{{ $leadWork->summary }}</p>
                         @endif

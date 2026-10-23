@@ -30,6 +30,7 @@
                     <span>Type <b>{{ $work->category }}</b></span>
                 @endif
                 @if ($work->live_url)
+                    <span>Website <a class="meta__link" href="{{ $work->live_url }}" target="_blank" rel="noopener"><b>{{ $work->liveHost() }}</b> ↗</a></span>
                     <a class="btn btn--primary btn--sm" href="{{ $work->live_url }}" target="_blank" rel="noopener">Visit the live site <x-site-icon name="arrow-right" /></a>
                 @endif
             </div>
@@ -54,7 +55,7 @@
                     @if ($work->allows_embed)
                         <iframe class="live__frame" src="{{ $work->live_url }}" title="Live preview of {{ $work->title }}" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>
                     @else
-                        <img class="live__shot" data-desktop="{{ $work->previewImageUrl(large: true) }}" data-phone="{{ \App\Support\LivePreview::screenshotUrl($work->live_url, 390, 844) }}" src="{{ $work->previewImageUrl(large: true) }}" alt="Screenshot of {{ $work->title }}" width="1600" height="1000" fetchpriority="high" decoding="async">
+                        <img class="live__shot" data-desktop="{{ $work->previewImageUrl(large: true) }}" data-phone="{{ \App\Support\LivePreview::screenshotUrl($work->live_url, 390, 844) }}" src="{{ $work->previewImageUrl(large: true) }}" alt="Screenshot of {{ $work->title }}" fetchpriority="high" decoding="async">
                     @endif
                 </div>
                 <div class="live__foot">
@@ -66,7 +67,7 @@
         <div class="frame" data-reveal="zoom">
             <div class="frame__bar"><i></i><i></i><i></i><span class="frame__addr">{{ $work->category ?: $work->title }}</span></div>
             @if ($work->cover_path)
-                <img class="frame__shot" src="{{ $work->coverUrl() }}" srcset="{{ $work->coverThumbUrl() }} 800w, {{ $work->coverUrl() }} 1600w" sizes="(max-width: 1200px) 100vw, 1160px" alt="Screenshot of {{ $work->title }}" width="1600" height="1000" fetchpriority="high" decoding="async">
+                <img class="frame__shot frame__shot--full" src="{{ $work->coverUrl() }}" srcset="{{ $work->coverThumbUrl() }} 800w, {{ $work->coverUrl() }} 1600w" sizes="(max-width: 1200px) 100vw, 1160px" alt="Screenshot of {{ $work->title }}" fetchpriority="high" decoding="async">
             @else
                 <div class="mock" aria-hidden="true">
                     <div class="mock__hero">{{ $work->headline ?: $work->title }}</div>

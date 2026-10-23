@@ -216,7 +216,7 @@ document.querySelectorAll('[data-live-preview]').forEach((preview) => {
             viewport.style.setProperty('--live-left', `${Math.max(0, (available - width * scale) / 2)}px`);
             viewport.style.setProperty('--live-height', `${Math.round(height * scale)}px`);
         } else if (shot) {
-            viewport.style.setProperty('--live-height', preview.dataset.mode === 'phone' ? '640px' : `${Math.round(available * 0.625)}px`);
+            viewport.style.setProperty('--live-height', 'auto');
         }
     };
 

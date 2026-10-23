@@ -76,7 +76,7 @@ new #[Title('Our work')] class extends Component {
                                 <flux:badge size="sm" color="amber">{{ __('On home page') }}</flux:badge>
                             @endif
                         </div>
-                        <div class="text-sm text-zinc-500">{{ $work->category ?: __('No category') }} · {{ __('Sort') }} {{ $work->sort_order }} · {{ count($work->screenshots ?? []) }} {{ __('screenshots') }}</div>
+                        <div class="text-sm text-zinc-500">@if ($work->liveHost())<a href="{{ $work->live_url }}" target="_blank" class="font-medium text-[#0b7a4b] hover:underline dark:text-emerald-400">{{ $work->liveHost() }}</a> · @endif{{ $work->category ?: __('No category') }} · {{ __('Sort') }} {{ $work->sort_order }} · {{ count($work->screenshots ?? []) }} {{ __('screenshots') }}</div>
                     </div>
                     <div class="flex flex-wrap gap-2">
                         <flux:button size="sm" icon="pencil-square" :href="route('admin.works.edit', $work)" wire:navigate>{{ __('Edit') }}</flux:button>

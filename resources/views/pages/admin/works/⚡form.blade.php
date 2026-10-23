@@ -296,7 +296,7 @@ new #[Title('Work')] class extends Component {
                 <flux:textarea wire:model="highlights" :label="__('What we built')" :description="__('One feature per line. Shown with ticks.')" rows="4" />
                 <flux:input wire:model="technologies" :label="__('Technologies')" :description="__('Separate with commas, e.g. Laravel, MySQL, Tailwind CSS')" />
                 <div class="grid gap-2">
-                    <flux:input wire:model="live_url" :label="__('Live website link')" placeholder="ezecatering.com.ng" :description="__('Type the domain. The project page shows a live preview of the website, and if you do not upload a cover, a screenshot of it is used automatically.')" />
+                    <flux:input wire:model="live_url" icon="globe-alt" :label="__('Website domain')" placeholder="ezecatering.com.ng" :description="__('The domain name of the site you built. It is shown on the project, with a live preview of the website. If you do not upload a cover, a screenshot of the site is used automatically.')" />
                     @if ($work?->live_url)
                         <flux:text class="text-sm">
                             @if ($work->allows_embed)
