@@ -29,7 +29,7 @@
             <div class="blob blob--3"></div>
         </div>
         <div class="container article-head">
-            <a class="back" href="{{ route('blog.index') }}" data-reveal>← All articles</a>
+            <a class="back" href="{{ route('blog.index') }}" wire:navigate.hover data-reveal>← All articles</a>
             <h1 data-reveal style="--delay: .08s">{{ $post->title }}</h1>
             @if ($post->excerpt)
                 <p class="lede" data-reveal style="--delay: .16s">{{ $post->excerpt }}</p>
@@ -75,7 +75,7 @@
                         <span class="eyebrow">Keep reading</span>
                         <h2>More articles</h2>
                     </div>
-                    <p data-reveal><a class="link" href="{{ route('blog.index') }}">See all articles →</a></p>
+                    <p data-reveal><a class="link" href="{{ route('blog.index') }}" wire:navigate.hover>See all articles →</a></p>
                 </div>
                 <div class="work-grid">
                     @foreach ($morePosts as $other)

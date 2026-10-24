@@ -14,7 +14,7 @@
             <div class="blob blob--3"></div>
         </div>
         <div class="container" style="padding-bottom: 112px">
-            <a class="back" href="{{ route('work.index') }}" data-reveal>← All work</a>
+            <a class="back" href="{{ route('work.index') }}" wire:navigate.hover data-reveal>← All work</a>
             @if ($work->category)
                 <span class="eyebrow eyebrow--dark" data-reveal>{{ $work->category }}</span>
             @endif
@@ -165,7 +165,7 @@
                         <span class="eyebrow">More work</span>
                         <h2>Other projects</h2>
                     </div>
-                    <p data-reveal><a class="link" href="{{ route('work.index') }}">See all our work →</a></p>
+                    <p data-reveal><a class="link" href="{{ route('work.index') }}" wire:navigate.hover>See all our work →</a></p>
                 </div>
                 <div class="work-grid">
                     @foreach ($moreWorks as $other)

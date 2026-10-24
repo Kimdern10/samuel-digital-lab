@@ -178,7 +178,7 @@
 
             @if ($leadWork)
                 <div class="case">
-                    <a class="frame" href="{{ route('work.show', $leadWork) }}" aria-label="View {{ $leadWork->title }}" data-reveal>
+                    <a class="frame" href="{{ route('work.show', $leadWork) }}" wire:navigate.hover aria-label="View {{ $leadWork->title }}" data-reveal>
                         <div class="frame__bar"><i></i><i></i><i></i><span class="frame__addr">{{ $leadWork->liveHost() ?? $leadWork->title }}</span></div>
                         @if ($leadWork->previewImageUrl())
                             <img class="frame__shot" src="{{ $leadWork->previewImageUrl() }}" srcset="{{ $leadWork->previewImageUrl() }} 800w, {{ $leadWork->previewImageUrl(large: true) }} 1600w" sizes="(max-width: 900px) 100vw, 620px" alt="Screenshot of {{ $leadWork->title }}" width="800" height="500" loading="lazy" decoding="async">
@@ -215,8 +215,8 @@
                             </div>
                         @endif
                         <div class="case__more">
-                            <a class="btn btn--primary btn--sm" href="{{ route('work.show', $leadWork) }}">View project <x-site-icon name="arrow-right" /></a>
-                            <a class="btn btn--outline btn--sm" href="{{ route('work.index') }}">All our work</a>
+                            <a class="btn btn--primary btn--sm" href="{{ route('work.show', $leadWork) }}" wire:navigate.hover>View project <x-site-icon name="arrow-right" /></a>
+                            <a class="btn btn--outline btn--sm" href="{{ route('work.index') }}" wire:navigate.hover>All our work</a>
                         </div>
                     </div>
                 </div>
@@ -305,7 +305,7 @@
                     </div>
                 @endif
                 <div class="hero__ctas" style="margin-top: 8px">
-                    <a class="btn btn--primary btn--sm" href="{{ route('about') }}">More about me <x-site-icon name="arrow-right" /></a>
+                    <a class="btn btn--primary btn--sm" href="{{ route('about') }}" wire:navigate.hover>More about me <x-site-icon name="arrow-right" /></a>
                     <a class="btn btn--outline btn--sm" href="{{ WhatsApp::link($site['whatsapp_primary'], 'Hello '.$site['about_name'].', I would like to talk about a website.') }}" target="_blank" rel="noopener">Chat with {{ $site['about_name'] }}</a>
                 </div>
             </div>
@@ -351,7 +351,7 @@
                         <span class="eyebrow">{{ $site['blog_eyebrow'] }}</span>
                         <h2>{{ $site['blog_title'] }}</h2>
                     </div>
-                    <p data-reveal style="--delay: .1s"><a class="link" href="{{ route('blog.index') }}">See all articles →</a></p>
+                    <p data-reveal style="--delay: .1s"><a class="link" href="{{ route('blog.index') }}" wire:navigate.hover>See all articles →</a></p>
                 </div>
                 <div class="work-grid">
                     @foreach ($latestPosts as $post)

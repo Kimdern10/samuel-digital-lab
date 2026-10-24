@@ -65,6 +65,8 @@
             <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', @json($site['google_analytics_id']));</script>
         @endif
 
+        @livewireStyles
+
         {{ $head ?? '' }}
     </head>
     <body>
@@ -73,10 +75,10 @@
 
         <header class="site-header">
             <div class="container">
-                <a class="brand" href="{{ route('home') }}" aria-label="{{ $site['business_name'] }} home"><x-site-logo /></a>
+                <a class="brand" href="{{ route('home') }}" wire:navigate.hover aria-label="{{ $site['business_name'] }} home"><x-site-logo /></a>
                 <nav class="site-nav" aria-label="Main">
                     @foreach ($links as $label => $href)
-                        <a href="{{ $href }}" @if ($current === strtolower($label)) aria-current="page" @endif>{{ $label }}</a>
+                        <a href="{{ $href }}" @unless (str_contains($href, '#')) wire:navigate.hover @endunless @if ($current === strtolower($label)) aria-current="page" @endif>{{ $label }}</a>
                     @endforeach
                 </nav>
                 <div class="header-tools">
@@ -95,7 +97,7 @@
 
         <nav class="mobile-menu" id="mobile-menu" aria-label="Main (mobile)">
             @foreach ($links as $label => $href)
-                <a href="{{ $href }}">{{ $label }}</a>
+                <a href="{{ $href }}" @unless (str_contains($href, '#')) wire:navigate.hover @endunless>{{ $label }}</a>
             @endforeach
             <a class="btn btn--primary" href="{{ route('home') }}#contact">Get a free quote <x-site-icon name="arrow-right" /></a>
             @if (auth()->user()?->is_admin)
@@ -111,7 +113,7 @@
             <div class="container">
                 <div class="footer__grid">
                     <div class="footer__brand">
-                        <a class="brand" href="{{ route('home') }}" aria-label="{{ $site['business_name'] }} home"><x-site-logo /></a>
+                        <a class="brand" href="{{ route('home') }}" wire:navigate.hover aria-label="{{ $site['business_name'] }} home"><x-site-logo /></a>
                         <p>{{ $site['tagline'] }}</p>
                         <a class="btn btn--primary btn--sm" href="{{ $whatsApp }}" target="_blank" rel="noopener">Chat on WhatsApp <x-site-icon name="arrow-right" /></a>
                     </div>
@@ -119,7 +121,7 @@
                         <h4>Explore</h4>
                         <ul>
                             @foreach ($links as $label => $href)
-                                <li><a href="{{ $href }}">{{ $label }}</a></li>
+                                <li><a href="{{ $href }}" @unless (str_contains($href, '#')) wire:navigate.hover @endunless>{{ $label }}</a></li>
                             @endforeach
                         </ul>
                     </div>
@@ -148,7 +150,7 @@
                 </div>
                 <div class="footer__bottom">
                     <span>© {{ now()->year }} {{ $site['business_name'] }} · {{ $site['city'] }}</span>
-                    <span><a href="{{ route('privacy') }}">Privacy policy</a> · Designed and built in Nigeria.</span>
+                    <span><a href="{{ route('privacy') }}" wire:navigate.hover>Privacy policy</a> · Designed and built in Nigeria.</span>
                 </div>
             </div>
         </footer>
@@ -156,5 +158,6 @@
         <a class="wa-float" href="{{ $whatsApp }}" target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 21.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.7 1 1-3.6-.2-.4C2.7 15.6 2.2 13.8 2.2 12 2.2 6.6 6.6 2.2 12 2.2c2.6 0 5.1 1 6.9 2.9 1.9 1.9 2.9 4.3 2.9 6.9 0 5.4-4.4 9.8-9.8 9.8zm8.4-18.2C18.2 1.3 15.2 0 12 0 5.4 0 0 5.4 0 12c0 2.1.6 4.2 1.6 6L0 24l6.2-1.6c1.8 1 3.8 1.5 5.8 1.5 6.6 0 12-5.4 12-12 0-3.2-1.3-6.2-3.6-8.4z"/></svg>
         </a>
+        @livewireScripts
     </body>
 </html>
