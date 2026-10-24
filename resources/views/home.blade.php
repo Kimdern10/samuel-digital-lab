@@ -262,7 +262,8 @@
 
     {{-- Testimonials --}}
     @if ($testimonials->isNotEmpty())
-        <section class="section" id="testimonials">
+        @php($band = 1)
+        <section class="section {{ $band++ % 2 === 0 ? 'section--soft' : '' }}" id="testimonials">
             <div class="container">
                 <div class="section-head section-head--center" data-reveal>
                     <span class="eyebrow">{{ $site['testimonials_eyebrow'] }}</span>
@@ -284,8 +285,35 @@
         </section>
     @endif
 
+    {{-- About me --}}
+    @php($band ??= 1)
+    <section class="section {{ $band++ % 2 === 0 ? 'section--soft' : '' }}" id="about">
+        <div class="container about">
+            <x-about-photo data-reveal="zoom" />
+            <div class="about__body" data-reveal style="--delay: .1s">
+                <span class="eyebrow">{{ $site['about_eyebrow'] }}</span>
+                <h2>{{ $site['about_title'] }}</h2>
+                <p class="about__name"><b>{{ $site['about_name'] }}</b>@if (filled($site['about_role'])) · {{ $site['about_role'] }}@endif</p>
+                @foreach (array_slice(Setting::aboutParagraphs(), 0, 2) as $paragraph)
+                    <p class="about__text">{{ $paragraph }}</p>
+                @endforeach
+                @if (count($aboutFacts = Setting::list('about_facts')) > 0)
+                    <div class="about__facts">
+                        @foreach ($aboutFacts as $fact)
+                            <div><b data-count>{{ $fact['value'] }}</b><span>{{ $fact['label'] }}</span></div>
+                        @endforeach
+                    </div>
+                @endif
+                <div class="hero__ctas" style="margin-top: 8px">
+                    <a class="btn btn--primary btn--sm" href="{{ route('about') }}">More about me <x-site-icon name="arrow-right" /></a>
+                    <a class="btn btn--outline btn--sm" href="{{ WhatsApp::link($site['whatsapp_primary'], 'Hello '.$site['about_name'].', I would like to talk about a website.') }}" target="_blank" rel="noopener">Chat with {{ $site['about_name'] }}</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     {{-- Why choose us --}}
-    <section class="section @if ($testimonials->isNotEmpty()) section--soft @endif" id="why">
+    <section class="section {{ $band++ % 2 === 0 ? 'section--soft' : '' }}" id="why">
         <div class="container">
             <div class="section-head" data-reveal>
                 <span class="eyebrow">{{ $site['why_eyebrow'] }}</span>
@@ -316,7 +344,7 @@
 
     {{-- Latest articles --}}
     @if ($latestPosts->isNotEmpty())
-        <section class="section" id="blog">
+        <section class="section {{ $band++ % 2 === 0 ? 'section--soft' : '' }}" id="blog">
             <div class="container">
                 <div class="section-head section-head--split">
                     <div data-reveal>
@@ -336,7 +364,7 @@
 
     {{-- FAQ --}}
     @if ($faqs->isNotEmpty())
-        <section class="section @unless ($testimonials->isNotEmpty()) section--soft @endunless" id="faq">
+        <section class="section {{ $band++ % 2 === 0 ? 'section--soft' : '' }}" id="faq">
             <div class="container faq">
                 <div class="section-head" data-reveal>
                     <span class="eyebrow">{{ $site['faq_eyebrow'] }}</span>
@@ -356,7 +384,7 @@
     @endif
 
     {{-- Contact --}}
-    <section class="section" id="contact">
+    <section class="section {{ $band++ % 2 === 0 ? 'section--soft' : '' }}" id="contact">
         <div class="container contact">
             <div class="contact__intro" data-reveal>
                 <span class="eyebrow">{{ $site['contact_eyebrow'] }}</span>

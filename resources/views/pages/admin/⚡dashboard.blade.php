@@ -47,6 +47,12 @@ new #[Title('Dashboard')] class extends Component {
                 'url' => route('security.edit'),
             ],
             [
+                'done' => filled($settings['about_photo_path']),
+                'title' => __('Add your photo and story to About me'),
+                'hint' => __('Clients trust a real face. A starter story is ready for you to edit.'),
+                'url' => route('admin.about'),
+            ],
+            [
                 'done' => ! str_contains($settings['speed_card_url'], 'example.'),
                 'title' => __('Show real speed scores on the home page'),
                 'hint' => __('Website content → Speed report card → Get my real scores from Google.'),
@@ -131,7 +137,7 @@ new #[Title('Dashboard')] class extends Component {
         @foreach ([
             ['route' => 'admin.content', 'icon' => 'pencil-square', 'title' => __('Website content'), 'text' => __('Headings and text on the home page')],
             ['route' => 'admin.services', 'icon' => 'tag', 'title' => __('Services & prices'), 'text' => __('The service cards and prices')],
-            ['route' => 'admin.testimonials', 'icon' => 'chat-bubble-bottom-center-text', 'title' => __('Testimonials'), 'text' => __('What clients say about you')],
+            ['route' => 'admin.about', 'icon' => 'user-circle', 'title' => __('About me'), 'text' => __('Your photo, story and skills')],
             ['route' => 'admin.settings', 'icon' => 'cog-6-tooth', 'title' => __('Business details'), 'text' => __('Logo, WhatsApp, email and socials')],
         ] as $shortcut)
             <a href="{{ route($shortcut['route']) }}" wire:navigate class="group flex items-start gap-3 rounded-xl border border-zinc-200 p-4 transition hover:border-[#0b7a4b] hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-800/60">

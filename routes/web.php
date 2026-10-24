@@ -11,6 +11,7 @@ Route::get('work', [WorkController::class, 'index'])->name('work.index');
 Route::get('work/{work}', [WorkController::class, 'show'])->name('work.show');
 Route::get('blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('blog/{post}', [BlogController::class, 'show'])->name('blog.show');
+Route::view('about', 'about')->name('about');
 Route::view('privacy', 'privacy')->name('privacy');
 Route::get('sitemap.xml', SitemapController::class)->name('sitemap');
 Route::get('robots.txt', [SitemapController::class, 'robots'])->name('robots');

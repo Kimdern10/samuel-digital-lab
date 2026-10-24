@@ -43,6 +43,16 @@ class Setting extends Model
         'google_analytics_id' => '',
         'privacy_policy' => '',
 
+        // About me
+        'about_eyebrow' => 'About me',
+        'about_title' => 'The person behind your website',
+        'about_name' => 'Samuel',
+        'about_role' => 'Founder & Lead Developer',
+        'about_photo_path' => '',
+        'about_cv_path' => '',
+        'github_url' => '',
+        'about_story' => "Hi, I'm Samuel, the founder and lead developer of Samuel Digital Lab. I build fast, modern websites for businesses, schools, churches and publishers across Nigeria, using Laravel, PHP and MySQL.\n\nMy focus is simple: a website that opens quickly on mobile data, shows up on Google and turns visitors into calls and WhatsApp messages. Every site I build is tested before launch and comes with an admin panel you can run yourself.\n\nWhen you work with me, you deal directly with the person building your website, with no middlemen. I explain everything in plain language, keep you updated on a preview link while I build, and stay with you after launch.",
+
         // Home page: search engines
         'seo_title' => 'Web design & development in Nigeria',
         'seo_description' => 'We build fast, modern and responsive websites that help Nigerian businesses grow online: business, e-commerce, blog and news websites and landing pages.',
@@ -124,6 +134,8 @@ class Setting extends Model
             ['title' => 'Ongoing support', 'text' => 'We stay with you after launch for updates, backups and fixes.'],
             ['title' => 'Custom solutions', 'text' => 'Booking, payments, portals: built around how your business works.'],
         ],
+        'about_facts' => [],
+        'about_skills' => ['Laravel', 'PHP', 'MySQL', 'Livewire', 'Tailwind CSS', 'JavaScript', 'SEO', 'Website speed'],
         'technologies' => ['HTML', 'CSS', 'JavaScript', 'PHP', 'Laravel', 'MySQL', 'Livewire', 'Tailwind CSS', 'Bootstrap', 'Paystack', 'Flutterwave', 'Google Search Console'],
     ];
 
@@ -136,6 +148,7 @@ class Setting extends Model
         'business_name', 'tagline', 'whatsapp_primary', 'whatsapp_secondary', 'email', 'city',
         'facebook_url', 'instagram_url', 'x_url', 'linkedin_url', 'tiktok_url', 'logo_path', 'logo_show_name',
         'google_analytics_id', 'privacy_policy',
+        'about_eyebrow', 'about_title', 'about_name', 'about_role', 'about_photo_path', 'about_cv_path', 'github_url', 'about_story',
     ];
 
     private const string CACHE_KEY = 'site-settings';
@@ -147,9 +160,11 @@ class Setting extends Model
      */
     public static function values(): array
     {
-        return Cache::rememberForever(self::CACHE_KEY, fn (): array => array_merge(
-            self::DEFAULTS,
-            static::query()->pluck('value', 'key')->map(fn (?string $value): string => (string) $value)->all(),
+        // Only the saved values are cached; defaults are added on every read so
+        // settings introduced by a later update are never missing from an old cache.
+        return array_merge(self::DEFAULTS, Cache::rememberForever(
+            self::CACHE_KEY,
+            fn (): array => static::query()->pluck('value', 'key')->map(fn (?string $value): string => (string) $value)->all(),
         ));
     }
 
@@ -169,6 +184,26 @@ class Setting extends Model
         $path = self::get('logo_path');
 
         return $path !== '' ? Storage::disk('public')->url($path) : null;
+    }
+
+    /**
+     * Get the public URL of a file saved in a setting (e.g. the About photo or CV), if there is one.
+     */
+    public static function fileUrl(string $key): ?string
+    {
+        $path = self::get($key);
+
+        return $path !== '' ? Storage::disk('public')->url($path) : null;
+    }
+
+    /**
+     * Get the About story as paragraphs.
+     *
+     * @return list<string>
+     */
+    public static function aboutParagraphs(): array
+    {
+        return array_values(array_filter(array_map('trim', preg_split('/\R\s*\R/', self::get('about_story')) ?: [])));
     }
 
     /**

@@ -15,6 +15,7 @@
     $links = array_filter([
         'Services' => route('home').'#services',
         'Work' => route('work.index'),
+        'About' => route('about'),
         'Blog' => \App\Models\Post::query()->published()->exists() ? route('blog.index') : null,
         'Process' => route('home').'#process',
         'Contact' => route('home').'#contact',

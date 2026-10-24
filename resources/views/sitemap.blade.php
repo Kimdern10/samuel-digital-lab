@@ -31,6 +31,9 @@
         @endforeach
     @endif
     <url>
+        <loc>{{ route('about') }}</loc>
+    </url>
+    <url>
         <loc>{{ route('privacy') }}</loc>
     </url>
 </urlset>

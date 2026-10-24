@@ -30,6 +30,9 @@
                     <flux:sidebar.item icon="pencil-square" :href="route('admin.content')" :current="request()->routeIs('admin.content')" wire:navigate>
                         {{ __('Website content') }}
                     </flux:sidebar.item>
+                    <flux:sidebar.item icon="user-circle" :href="route('admin.about')" :current="request()->routeIs('admin.about')" wire:navigate>
+                        {{ __('About me') }}
+                    </flux:sidebar.item>
                     <flux:sidebar.item icon="tag" :href="route('admin.services')" :current="request()->routeIs('admin.services')" wire:navigate>
                         {{ __('Services & prices') }}
                     </flux:sidebar.item>

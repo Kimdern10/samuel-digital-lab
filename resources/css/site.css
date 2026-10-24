@@ -457,6 +457,27 @@ a.frame__addr:hover { color: var(--ink); }
 .gallery button:hover img { transform: scale(1.05); }
 @media (max-width: 900px) { .detail { grid-template-columns: minmax(0, 1fr); gap: 36px; } .aside-card { position: static; } .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
+/* About me */
+.about { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 64px; align-items: center; }
+.about--page { align-items: start; }
+.about__body { display: grid; gap: 18px; justify-items: start; }
+.about__body h2 { font-size: clamp(32px, 4.4vw, 52px); letter-spacing: -.04em; }
+.about__name { font-size: 17px; color: var(--muted); }
+.about__name b { color: var(--ink); }
+.about__text { color: var(--muted); font-size: 17px; }
+.about__facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; width: 100%; margin-top: 6px; }
+.about__facts div { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
+.about__facts b { display: block; font-size: 30px; font-weight: 800; letter-spacing: -.03em; color: var(--brand); line-height: 1.1; }
+.about__facts span { font-size: 13.5px; color: var(--muted); line-height: 1.4; display: block; margin-top: 4px; }
+.about__subhead { font-size: 18px; margin: 8px 0 12px; }
+.about-photo { position: relative; justify-self: center; width: 100%; max-width: 440px; }
+.about-photo::before { content: ""; position: absolute; inset: 18px -18px -18px 18px; border-radius: 28px; background: linear-gradient(135deg, #16a765, #0b7a4b 55%, #f5b82e); opacity: .9; z-index: 0; }
+.about-photo > img, .about-photo__empty { position: relative; z-index: 1; display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: center top; border-radius: 28px; border: 1px solid var(--line); box-shadow: var(--shadow); background: var(--surface); }
+.about-photo__empty { display: grid; place-content: center; justify-items: center; gap: 16px; background: var(--dark); color: #fff; font-size: 26px; font-weight: 800; letter-spacing: -.02em; }
+.about-photo__badge { position: absolute; z-index: 2; left: -12px; bottom: 28px; display: inline-flex; align-items: center; gap: 8px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 10px 16px; font-size: 14px; font-weight: 700; box-shadow: var(--shadow); }
+.about-photo__badge svg { width: 16px; height: 16px; color: var(--brand); }
+@media (max-width: 900px) { .about { grid-template-columns: minmax(0, 1fr); gap: 48px; } .about-photo { max-width: 340px; } .about-photo__badge { left: 0; } }
+
 /* Photo frame: shows the whole picture whatever its shape, with a soft blurred copy filling the sides */
 .photo { position: relative; overflow: hidden; background: var(--dark-2); isolation: isolate; }
 .photo::before { content: ""; position: absolute; inset: -24px; z-index: -1; background: var(--photo) center / cover no-repeat; filter: blur(22px) saturate(1.15) brightness(.85); transform: scale(1.08); }
