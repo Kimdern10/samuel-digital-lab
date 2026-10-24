@@ -44,7 +44,9 @@
 
     @if ($post->cover_path)
         <div class="container article-wrap" style="margin-top: -48px; position: relative; z-index: 2">
-            <img class="article-cover" src="{{ $post->coverUrl() }}" srcset="{{ $post->coverThumbUrl() }} 800w, {{ $post->coverUrl() }} 1600w" sizes="(max-width: 820px) 100vw, 780px" alt="" fetchpriority="high" decoding="async" data-reveal="zoom">
+            <div class="photo photo--cover" style="--photo: url('{{ $post->coverThumbUrl() }}')" data-reveal="zoom">
+                <img src="{{ $post->coverUrl() }}" srcset="{{ $post->coverThumbUrl() }} 800w, {{ $post->coverUrl() }} 1600w" sizes="(max-width: 820px) 100vw, 780px" alt="" fetchpriority="high" decoding="async">
+            </div>
         </div>
     @endif
 

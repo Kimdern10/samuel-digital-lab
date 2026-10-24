@@ -457,6 +457,14 @@ a.frame__addr:hover { color: var(--ink); }
 .gallery button:hover img { transform: scale(1.05); }
 @media (max-width: 900px) { .detail { grid-template-columns: minmax(0, 1fr); gap: 36px; } .aside-card { position: static; } .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
+/* Photo frame: shows the whole picture whatever its shape, with a soft blurred copy filling the sides */
+.photo { position: relative; overflow: hidden; background: var(--dark-2); isolation: isolate; }
+.photo::before { content: ""; position: absolute; inset: -24px; z-index: -1; background: var(--photo) center / cover no-repeat; filter: blur(22px) saturate(1.15) brightness(.85); transform: scale(1.08); }
+.photo img { width: 100%; height: 100%; object-fit: contain; object-position: center; background: transparent; }
+.photo--card { aspect-ratio: 16 / 9; }
+.photo--card .work-card__img { aspect-ratio: auto; height: 100%; object-fit: contain; object-position: center; background: transparent; }
+.photo--cover { aspect-ratio: 16 / 9; max-height: 560px; width: 100%; border-radius: 22px; border: 1px solid var(--line); box-shadow: var(--shadow); }
+
 /* Blog */
 .post-card__meta { font-size: 13px; font-weight: 600; color: var(--muted); }
 .pager { display: flex; justify-content: center; gap: 12px; margin-top: 40px; }
