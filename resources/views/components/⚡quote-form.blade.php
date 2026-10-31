@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 new class extends Component {
@@ -84,6 +85,19 @@ new class extends Component {
             'details.required' => 'Please tell us a little about the website.',
             'details.min' => 'Please tell us a little more (at least 10 characters).',
         ];
+    }
+
+    /**
+     * Fill the form from the cost calculator, leaving the visitor to add their contact details.
+     */
+    #[On('estimate-ready')]
+    public function fillFromEstimate(string $service, string $budget, string $details): void
+    {
+        $this->sent = false;
+        $this->service = in_array($service, $this->serviceOptions, true) ? $service : 'Something else';
+        $this->budget = in_array($budget, QuoteRequest::BUDGETS, true) ? $budget : '';
+        $this->details = mb_substr($details, 0, 2900);
+        $this->resetValidation();
     }
 
     /**

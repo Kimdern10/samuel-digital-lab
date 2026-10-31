@@ -22,6 +22,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::livewire('content', 'pages::admin.content')->name('admin.content');
     Route::livewire('about', 'pages::admin.about')->name('admin.about');
     Route::livewire('services', 'pages::admin.services')->name('admin.services');
+    Route::livewire('calculator', 'pages::admin.calculator')->name('admin.calculator');
     Route::livewire('testimonials', 'pages::admin.testimonials')->name('admin.testimonials');
     Route::livewire('questions', 'pages::admin.faqs')->name('admin.faqs');
     Route::livewire('settings', 'pages::admin.settings')->name('admin.settings');

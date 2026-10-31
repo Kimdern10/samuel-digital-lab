@@ -115,7 +115,7 @@
                     <h2>{{ $site['services_title'] }}</h2>
                 </div>
                 @if (filled($site['services_text']))
-                    <p data-reveal style="--delay: .1s">{{ $site['services_text'] }}</p>
+                    <p data-reveal style="--delay: .1s">{{ $site['services_text'] }} <a class="link" href="#estimate">Estimate your price →</a></p>
                 @endif
             </div>
             <div class="services">
@@ -396,6 +396,26 @@
                             <div class="faq__answer">{!! nl2br(e($faq->answer)) !!}</div>
                         </details>
                     @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+
+    {{-- Cost calculator --}}
+    @if (count(\App\Support\CostEstimator::siteTypes()) > 0)
+        <section class="section {{ $band++ % 2 === 0 ? 'section--soft' : '' }}" id="estimate">
+            <div class="container">
+                <div class="section-head section-head--split">
+                    <div data-reveal>
+                        <span class="eyebrow">{{ $site['calc_eyebrow'] }}</span>
+                        <h2>{{ $site['calc_title'] }}</h2>
+                    </div>
+                    @if (filled($site['calc_text']))
+                        <p data-reveal style="--delay: .1s">{{ $site['calc_text'] }}</p>
+                    @endif
+                </div>
+                <div data-reveal style="--delay: .1s">
+                    <livewire:cost-calculator />
                 </div>
             </div>
         </section>

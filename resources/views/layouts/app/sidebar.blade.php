@@ -39,6 +39,9 @@
                     <flux:sidebar.item icon="tag" :href="route('admin.services')" :current="request()->routeIs('admin.services')" wire:navigate.hover>
                         {{ __('Services & prices') }}
                     </flux:sidebar.item>
+                    <flux:sidebar.item icon="calculator" :href="route('admin.calculator')" :current="request()->routeIs('admin.calculator')" wire:navigate.hover>
+                        {{ __('Cost calculator') }}
+                    </flux:sidebar.item>
                     <flux:sidebar.item icon="chat-bubble-bottom-center-text" :href="route('admin.testimonials')" :current="request()->routeIs('admin.testimonials')" wire:navigate.hover>
                         {{ __('Testimonials') }}
                     </flux:sidebar.item>
