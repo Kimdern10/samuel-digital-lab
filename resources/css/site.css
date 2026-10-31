@@ -658,3 +658,14 @@ a.frame__addr:hover { color: var(--ink); }
     .marquee__track { animation: none; flex-wrap: wrap; width: auto; justify-content: center; row-gap: 12px; }
     .marquee__dup { display: none; }
 }
+
+/* Live blog search */
+.blog-search { position: relative; }
+.blog-search__spinner { width: 16px; height: 16px; border: 2px solid var(--line); border-top-color: var(--brand); border-radius: 50%; animation: spin .7s linear infinite; flex: none; }
+.blog-live__results { transition: opacity .2s ease; }
+.blog-live__results.is-loading { opacity: .55; }
+.post-card--live { animation: rise .6s var(--ease) both; animation-delay: var(--delay, 0s); }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+    .post-card--live, .blog-search__spinner { animation: none; }
+}

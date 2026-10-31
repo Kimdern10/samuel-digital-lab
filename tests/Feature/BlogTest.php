@@ -91,6 +91,28 @@ test('articles can be searched by title, summary or text', function () {
         ->assertSee('Try another word or topic.');
 });
 
+test('search results update live as the visitor types and picks a topic', function () {
+    Post::factory()->create(['title' => 'Paystack for small shops', 'category' => 'Payments']);
+    Post::factory()->create(['title' => 'Paystack or Flutterwave', 'category' => 'Website prices']);
+    Post::factory()->create(['title' => 'Speed matters', 'category' => 'Website prices']);
+
+    Livewire\Livewire::test('blog-search')
+        ->assertSee('Speed matters')
+        ->set('q', 'paystack')
+        ->assertSee('2 articles')
+        ->assertSee('Paystack for small shops')
+        ->assertDontSee('Speed matters')
+        ->call('filter', 'Website prices')
+        ->assertSet('category', 'Website prices')
+        ->assertSee('Paystack or Flutterwave')
+        ->assertDontSee('Paystack for small shops')
+        ->call('filter', 'Not a topic')
+        ->assertSet('category', '')
+        ->call('clear')
+        ->assertSet('q', '')
+        ->assertSee('Speed matters');
+});
+
 test('a search containing wildcard characters is treated as plain text', function () {
     Post::factory()->create(['title' => 'Prices in 2026']);
 

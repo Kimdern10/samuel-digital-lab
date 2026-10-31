@@ -3,40 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class BlogController extends Controller
 {
     /**
-     * Show published articles, optionally filtered by category or a search.
+     * Show the blog. The list, live search and topic filters are the blog-search component.
      */
-    public function index(Request $request): View
+    public function index(): View
     {
-        $categories = Post::query()->published()->reorder()->whereNotNull('category')->distinct()->orderBy('category')->pluck('category');
-        $category = $categories->contains($request->query('category')) ? (string) $request->query('category') : null;
-        $search = trim(mb_substr((string) $request->query('q'), 0, 80));
-
-        $posts = Post::query()
-            ->published()
-            ->when($category, fn ($query) => $query->where('category', $category))
-            ->when($search !== '', function ($query) use ($search): void {
-                $like = '%'.str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $search).'%';
-
-                $query->where(fn ($query) => $query
-                    ->where('title', 'like', $like)
-                    ->orWhere('excerpt', 'like', $like)
-                    ->orWhere('body', 'like', $like));
-            })
-            ->paginate(12)
-            ->withQueryString();
-
-        return view('blog.index', [
-            'posts' => $posts,
-            'categories' => $categories,
-            'category' => $category,
-            'search' => $search,
-        ]);
+        return view('blog.index');
     }
 
     /**
