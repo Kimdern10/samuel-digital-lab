@@ -34,6 +34,9 @@
         <loc>{{ route('about') }}</loc>
     </url>
     <url>
+        <loc>{{ route('consultation') }}</loc>
+    </url>
+    <url>
         <loc>{{ route('privacy') }}</loc>
     </url>
 </urlset>

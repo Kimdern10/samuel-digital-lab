@@ -430,6 +430,25 @@ a.frame__addr:hover { color: var(--ink); }
 @media (max-width: 960px) { .calc { grid-template-columns: minmax(0, 1fr); } .calc__total { position: static; } }
 @media (max-width: 560px) { .calc__types, .calc__extras { grid-template-columns: minmax(0, 1fr); } }
 
+/* Consultation booking */
+.booking-page { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 40px; align-items: start; }
+.booking-aside { position: sticky; top: 100px; display: grid; gap: 16px; padding: 28px; border-radius: 24px; background: var(--bg-soft); border: 1px solid var(--line); }
+.booking-aside h3 { font-size: 20px; }
+.booking-aside p { color: var(--muted); font-size: 15px; }
+.booking__form h3 { font-size: 18px; letter-spacing: -.02em; margin-top: 6px; }
+.booking__form h3 small { font-weight: 500; color: var(--muted); font-size: 14px; }
+.booking__days { display: flex; gap: 10px; overflow-x: auto; padding: 4px 2px 10px; scrollbar-width: thin; }
+.booking__day { flex: none; width: 76px; display: grid; justify-items: center; gap: 2px; padding: 12px 6px; border-radius: 16px; border: 1.5px solid var(--line); background: var(--bg-soft); color: var(--ink); cursor: pointer; font: inherit; transition: border-color .2s, transform .25s var(--ease); }
+.booking__day span { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+.booking__day b { font-size: 24px; font-weight: 800; line-height: 1.1; }
+.booking__day:hover { transform: translateY(-2px); }
+.booking__day.is-active, .booking__time.is-active { border-color: var(--brand); background: var(--tint); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 18%, transparent); }
+.booking__times { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; }
+.booking__time { padding: 11px 8px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--bg-soft); color: var(--ink); font: 700 15px/1 var(--font); cursor: pointer; transition: border-color .2s; }
+.booking__time:hover { border-color: var(--ink); }
+.booking__done { justify-items: start; }
+@media (max-width: 900px) { .booking-page { grid-template-columns: minmax(0, 1fr); } .booking-aside { position: static; } }
+
 /* Contact */
 .contact { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 56px; align-items: start; }
 .contact__intro { display: grid; gap: 18px; justify-items: start; }

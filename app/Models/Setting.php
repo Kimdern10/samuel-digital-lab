@@ -47,6 +47,13 @@ class Setting extends Model
         'calc_title' => 'What will your website cost?',
         'calc_text' => 'Pick what you need and see an estimate straight away. Your final price is confirmed after a short chat.',
         'calc_extra_page_price' => '10000',
+        'consult_enabled' => '1',
+        'consult_start' => '09:00',
+        'consult_end' => '17:00',
+        'consult_minutes' => '15',
+        'consult_interval' => '30',
+        'consult_days_ahead' => '14',
+        'consult_notice_hours' => '3',
         'google_rating' => '',
         'google_review_count' => '',
         'google_reviews_url' => '',
@@ -142,6 +149,7 @@ class Setting extends Model
             ['title' => 'Ongoing support', 'text' => 'We stay with you after launch for updates, backups and fixes.'],
             ['title' => 'Custom solutions', 'text' => 'Booking, payments, portals: built around how your business works.'],
         ],
+        'consult_days' => [1, 2, 3, 4, 5],
         'calc_site_types' => [
             ['name' => 'Landing pages', 'price' => '80000', 'pages' => '1'],
             ['name' => 'Business & portfolio websites', 'price' => '150000', 'pages' => '6'],
@@ -171,6 +179,7 @@ class Setting extends Model
         'facebook_url', 'instagram_url', 'x_url', 'linkedin_url', 'tiktok_url', 'logo_path', 'logo_show_name',
         'google_analytics_id', 'privacy_policy', 'google_rating', 'google_review_count', 'google_reviews_url',
         'calc_eyebrow', 'calc_title', 'calc_text', 'calc_extra_page_price',
+        'consult_enabled', 'consult_start', 'consult_end', 'consult_minutes', 'consult_interval', 'consult_days_ahead', 'consult_notice_hours',
         'about_eyebrow', 'about_title', 'about_name', 'about_role', 'about_photo_path', 'about_cv_path', 'github_url', 'about_story',
     ];
 

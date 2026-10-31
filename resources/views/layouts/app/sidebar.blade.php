@@ -18,6 +18,9 @@
                     <flux:sidebar.item icon="inbox" :href="route('admin.quotes.index')" :current="request()->routeIs('admin.quotes.*')" :badge="\App\Models\QuoteRequest::query()->where('status', \App\Enums\QuoteStatus::New)->count() ?: null" wire:navigate.hover>
                         {{ __('Quote requests') }}
                     </flux:sidebar.item>
+                    <flux:sidebar.item icon="phone" :href="route('admin.consultations')" :current="request()->routeIs('admin.consultations')" :badge="\App\Models\Consultation::query()->booked()->where('starts_at', '>=', now())->count() ?: null" wire:navigate.hover>
+                        {{ __('Booked calls') }}
+                    </flux:sidebar.item>
                     <flux:sidebar.item icon="photo" :href="route('admin.works.index')" :current="request()->routeIs('admin.works.*')" wire:navigate.hover>
                         {{ __('Our work') }}
                     </flux:sidebar.item>

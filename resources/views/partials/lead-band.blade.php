@@ -9,7 +9,11 @@
             </div>
             <div class="hero__ctas">
                 <a class="btn btn--light" href="{{ route('home') }}#contact">Get a quote <x-site-icon name="arrow-right" /></a>
-                <a class="btn btn--ghost-light" href="{{ \App\Support\WhatsApp::link($site['whatsapp_primary'], 'Hello '.$site['business_name'].', I saw your work and I would like a website.') }}" target="_blank" rel="noopener">Chat on WhatsApp</a>
+                @if (\App\Support\ConsultationSlots::enabled())
+                    <a class="btn btn--ghost-light" href="{{ route('consultation') }}" wire:navigate.hover>Book a free call</a>
+                @else
+                    <a class="btn btn--ghost-light" href="{{ \App\Support\WhatsApp::link($site['whatsapp_primary'], 'Hello '.$site['business_name'].', I saw your work and I would like a website.') }}" target="_blank" rel="noopener">Chat on WhatsApp</a>
+                @endif
             </div>
         </div>
     </div>

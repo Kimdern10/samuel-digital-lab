@@ -13,6 +13,7 @@ Route::get('work/{work}', [WorkController::class, 'show'])->name('work.show');
 Route::get('blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('blog/{post}', [BlogController::class, 'show'])->name('blog.show');
 Route::view('about', 'about')->name('about');
+Route::view('book-a-call', 'book-a-call')->name('consultation');
 Route::view('privacy', 'privacy')->name('privacy');
 Route::get('newsletter/unsubscribe/{token}', [NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
 Route::get('sitemap.xml', SitemapController::class)->name('sitemap');

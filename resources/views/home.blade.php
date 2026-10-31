@@ -430,6 +430,9 @@
                 @if (filled($site['contact_text']))
                     <p>{{ $site['contact_text'] }}</p>
                 @endif
+                @if (\App\Support\ConsultationSlots::enabled())
+                    <a class="btn btn--outline" href="{{ route('consultation') }}" wire:navigate.hover>Prefer to talk? Book a free {{ \App\Support\ConsultationSlots::minutes() }}-minute call <x-site-icon name="arrow-right" /></a>
+                @endif
                 <div class="reach">
                     @foreach (array_filter(['phone' => $site['whatsapp_primary'], 'phone2' => $site['whatsapp_secondary']]) as $id => $number)
                         <div class="reach__item">
