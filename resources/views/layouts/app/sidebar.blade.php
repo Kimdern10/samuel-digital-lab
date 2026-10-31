@@ -21,6 +21,9 @@
                     <flux:sidebar.item icon="photo" :href="route('admin.works.index')" :current="request()->routeIs('admin.works.*')" wire:navigate.hover>
                         {{ __('Our work') }}
                     </flux:sidebar.item>
+                    <flux:sidebar.item icon="envelope" :href="route('admin.subscribers')" :current="request()->routeIs('admin.subscribers')" wire:navigate.hover>
+                        {{ __('Newsletter') }}
+                    </flux:sidebar.item>
                     <flux:sidebar.item icon="newspaper" :href="route('admin.posts.index')" :current="request()->routeIs('admin.posts.*')" wire:navigate.hover>
                         {{ __('Blog') }}
                     </flux:sidebar.item>

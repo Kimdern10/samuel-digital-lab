@@ -116,6 +116,7 @@
                         <a class="brand" href="{{ route('home') }}" wire:navigate.hover aria-label="{{ $site['business_name'] }} home"><x-site-logo /></a>
                         <p>{{ $site['tagline'] }}</p>
                         <a class="btn btn--primary btn--sm" href="{{ $whatsApp }}" target="_blank" rel="noopener">Chat on WhatsApp <x-site-icon name="arrow-right" /></a>
+                        <livewire:newsletter-form />
                     </div>
                     <div>
                         <h4>Explore</h4>

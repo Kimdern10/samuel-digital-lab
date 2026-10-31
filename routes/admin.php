@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NewsletterController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
@@ -22,4 +23,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::livewire('testimonials', 'pages::admin.testimonials')->name('admin.testimonials');
     Route::livewire('questions', 'pages::admin.faqs')->name('admin.faqs');
     Route::livewire('settings', 'pages::admin.settings')->name('admin.settings');
+
+    Route::livewire('newsletter', 'pages::admin.subscribers')->name('admin.subscribers');
+    Route::get('newsletter/export', [NewsletterController::class, 'export'])->name('admin.subscribers.export');
 });
