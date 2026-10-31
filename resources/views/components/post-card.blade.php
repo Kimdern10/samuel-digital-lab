@@ -9,7 +9,7 @@
         @endif
     </div>
     <div class="work-card__body">
-        <span class="post-card__meta">{{ ($post->published_at ?? $post->created_at)?->format('j M Y') }} · {{ $post->readingMinutes() }} min read</span>
+        <span class="post-card__meta">@if ($post->category)<span class="post-card__topic">{{ $post->category }}</span> · @endif{{ ($post->published_at ?? $post->created_at)?->format('j M Y') }} · {{ $post->readingMinutes() }} min read</span>
         <{{ $headingLevel }}>{{ $post->title }}</{{ $headingLevel }}>
         <p>{{ $post->summary() }}</p>
         <span class="link">Read article →</span>

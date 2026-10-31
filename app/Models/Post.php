@@ -20,6 +20,7 @@ use Illuminate\Support\Str;
  * @property string $title
  * @property string $slug
  * @property string|null $excerpt
+ * @property string|null $category
  * @property string $body
  * @property string|null $cover_path
  * @property string|null $seo_description
@@ -28,7 +29,7 @@ use Illuminate\Support\Str;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['title', 'slug', 'excerpt', 'body', 'cover_path', 'seo_description', 'is_published', 'published_at'])]
+#[Fillable(['title', 'slug', 'excerpt', 'category', 'body', 'cover_path', 'seo_description', 'is_published', 'published_at'])]
 class Post extends Model
 {
     /** @use HasFactory<PostFactory> */

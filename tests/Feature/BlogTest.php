@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Post;
+use App\Models\User;
 
 test('the blog lists published articles only', function () {
     Post::factory()->create(['title' => 'Five signs your website is too slow']);
@@ -58,4 +59,53 @@ test('the sitemap lists published articles', function () {
     $this->get(route('sitemap'))
         ->assertSee(route('blog.show', $post), escape: false)
         ->assertDontSee(route('blog.show', $draft), escape: false);
+});
+
+test('the blog can be filtered by topic', function () {
+    Post::factory()->create(['title' => 'What a website costs', 'category' => 'Website prices']);
+    Post::factory()->create(['title' => 'Rank higher on Google', 'category' => 'Google and SEO']);
+
+    $this->get(route('blog.index'))
+        ->assertSee('What a website costs')
+        ->assertSee('Rank higher on Google')
+        ->assertSee(route('blog.index', ['category' => 'Website prices']), escape: false);
+
+    $this->get(route('blog.index', ['category' => 'Website prices']))
+        ->assertSee('What a website costs')
+        ->assertDontSee('Rank higher on Google');
+});
+
+test('articles can be searched by title, summary or text', function () {
+    Post::factory()->create(['title' => 'Paystack for small shops', 'body' => 'Take card payments.']);
+    Post::factory()->create(['title' => 'Speed matters', 'body' => 'Pages that open in a second keep visitors.']);
+
+    $this->get(route('blog.index', ['q' => 'paystack']))
+        ->assertSee('Paystack for small shops')
+        ->assertDontSee('Speed matters')
+        ->assertSee('1 article');
+
+    $this->get(route('blog.index', ['q' => 'in a second']))->assertSee('Speed matters');
+
+    $this->get(route('blog.index', ['q' => 'nothing matches this']))
+        ->assertSee('No articles')
+        ->assertSee('Try another word or topic.');
+});
+
+test('a search containing wildcard characters is treated as plain text', function () {
+    Post::factory()->create(['title' => 'Prices in 2026']);
+
+    $this->get(route('blog.index', ['q' => '%']))->assertDontSee('Prices in 2026');
+});
+
+test('the admin can give an article a topic', function () {
+    $this->actingAs(User::factory()->admin()->create());
+
+    Livewire\Livewire::test('pages::admin.posts.form')
+        ->set('title', 'Why speed matters')
+        ->set('body', 'Text')
+        ->set('category', 'Google and SEO')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(Post::query()->sole()->category)->toBe('Google and SEO');
 });

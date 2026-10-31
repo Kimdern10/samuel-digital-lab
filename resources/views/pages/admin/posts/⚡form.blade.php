@@ -24,6 +24,8 @@ new #[Title('Article')] class extends Component {
 
     public string $excerpt = '';
 
+    public string $category = '';
+
     public string $body = '';
 
     public string $seo_description = '';
@@ -56,6 +58,7 @@ new #[Title('Article')] class extends Component {
         $this->title = $post->title;
         $this->slug = $post->slug;
         $this->excerpt = (string) $post->excerpt;
+        $this->category = (string) $post->category;
         $this->body = $post->body;
         $this->seo_description = (string) $post->seo_description;
         $this->is_published = $post->is_published;
@@ -115,6 +118,7 @@ new #[Title('Article')] class extends Component {
             'title' => ['required', 'string', 'max:160'],
             'slug' => ['required', 'alpha_dash', 'max:170', Rule::unique('posts', 'slug')->ignore($this->post?->id)],
             'excerpt' => ['nullable', 'string', 'max:300'],
+            'category' => ['nullable', 'string', 'max:60'],
             'body' => ['required', 'string', 'max:60000'],
             'seo_description' => ['nullable', 'string', 'max:300'],
             'is_published' => ['boolean'],
@@ -143,6 +147,7 @@ new #[Title('Article')] class extends Component {
             'title' => $this->title,
             'slug' => $this->slug,
             'excerpt' => $this->excerpt ?: null,
+            'category' => trim($this->category) ?: null,
             'body' => $this->body,
             'seo_description' => $this->seo_description ?: null,
             'is_published' => $this->is_published,
@@ -179,6 +184,12 @@ new #[Title('Article')] class extends Component {
             <flux:input wire:model.live.debounce.400ms="title" :label="__('Title')" :placeholder="__('e.g. How much does a website cost in Nigeria?')" required />
             <flux:input wire:model.blur="slug" :label="__('Web address')" :description="url('blog').'/'.($slug ?: '…')" />
             <flux:textarea wire:model="excerpt" :label="__('Short summary')" :description="__('One or two sentences shown on the blog page and when shared.')" rows="2" />
+            <flux:input wire:model="category" :label="__('Topic')" :description="__('Groups articles on the Blog page, e.g. Website prices, Google and SEO, Tips.')" list="post-topics" class="max-w-80" />
+            <datalist id="post-topics">
+                @foreach (\App\Models\Post::query()->whereNotNull('category')->distinct()->orderBy('category')->pluck('category')->merge(['Website prices', 'Google and SEO', 'Online business tips', 'Our work'])->unique() as $topic)
+                    <option value="{{ $topic }}"></option>
+                @endforeach
+            </datalist>
         </flux:card>
 
         <flux:card class="grid gap-4">

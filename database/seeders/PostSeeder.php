@@ -15,6 +15,7 @@ class PostSeeder extends Seeder
         Post::query()->firstOrCreate(['slug' => 'how-much-does-a-website-cost-in-nigeria'], [
             'title' => 'How much does a website cost in Nigeria?',
             'excerpt' => 'Clear prices for business, blog, e-commerce and landing page websites in Nigeria, what affects the cost, and the yearly fees to plan for.',
+            'category' => 'Website prices',
             'seo_description' => 'Website prices in Nigeria explained: business websites from ₦150,000, blogs from ₦250,000, online shops from ₦350,000 and landing pages from ₦80,000.',
             'is_published' => false,
             'published_at' => null,
