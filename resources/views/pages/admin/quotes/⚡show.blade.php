@@ -15,6 +15,10 @@ new #[Title('Quote request')] class extends Component {
 
     public string $status = '';
 
+    public string $notes = '';
+
+    public string $followUpOn = '';
+
     /**
      * Load the request.
      */
@@ -22,6 +26,37 @@ new #[Title('Quote request')] class extends Component {
     {
         $this->quoteRequest = $quoteRequest;
         $this->status = $quoteRequest->status->value;
+        $this->notes = (string) $quoteRequest->notes;
+        $this->followUpOn = (string) $quoteRequest->follow_up_on?->format('Y-m-d');
+    }
+
+    /**
+     * Save the private notes and the follow-up date.
+     */
+    public function saveFollowUp(): void
+    {
+        $this->validate([
+            'notes' => ['nullable', 'string', 'max:5000'],
+            'followUpOn' => ['nullable', 'date'],
+        ]);
+
+        $this->quoteRequest->update([
+            'notes' => trim($this->notes) ?: null,
+            'follow_up_on' => $this->followUpOn ?: null,
+        ]);
+
+        Flux::toast(variant: 'success', text: $this->followUpOn
+            ? __('Saved. You will be reminded on :date.', ['date' => $this->quoteRequest->follow_up_on?->format('j M Y')])
+            : __('Notes saved.'));
+    }
+
+    /**
+     * Set the follow-up date a number of days from today.
+     */
+    public function remindIn(int $days): void
+    {
+        $this->followUpOn = now()->addDays(max(0, min($days, 365)))->format('Y-m-d');
+        $this->saveFollowUp();
     }
 
     /**
@@ -92,6 +127,23 @@ new #[Title('Quote request')] class extends Component {
             <div class="text-sm text-zinc-500">{{ __('Their message') }}</div>
             <p class="mt-1 whitespace-pre-line">{{ $quoteRequest->details }}</p>
         </div>
+    </flux:card>
+
+    <flux:card class="grid gap-4">
+        <div>
+            <flux:heading size="lg">{{ __('Your notes and follow-up') }}</flux:heading>
+            <flux:text class="mt-1">{{ __('Only you can see these. Set a date and this request appears on your dashboard on that day.') }}</flux:text>
+        </div>
+        <form wire:submit="saveFollowUp" class="grid gap-4">
+            <flux:textarea wire:model="notes" :label="__('Private notes')" rows="4" :placeholder="__('e.g. Called on Monday, wants a quote for 5 pages plus online payments.')" />
+            <div class="flex flex-wrap items-end gap-3">
+                <flux:input wire:model="followUpOn" type="date" :label="__('Follow up on')" class="max-w-52" />
+                <flux:button size="sm" wire:click="remindIn(1)">{{ __('Tomorrow') }}</flux:button>
+                <flux:button size="sm" wire:click="remindIn(3)">{{ __('In 3 days') }}</flux:button>
+                <flux:button size="sm" wire:click="remindIn(7)">{{ __('Next week') }}</flux:button>
+            </div>
+            <div><flux:button variant="primary" type="submit">{{ __('Save notes') }}</flux:button></div>
+        </form>
     </flux:card>
 
     <div class="flex flex-wrap items-end justify-between gap-4">

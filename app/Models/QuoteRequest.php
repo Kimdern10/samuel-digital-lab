@@ -18,12 +18,14 @@ use Illuminate\Support\Carbon;
  * @property string $service
  * @property string $budget
  * @property string $details
+ * @property string|null $notes
+ * @property Carbon|null $follow_up_on
  * @property QuoteStatus $status
  * @property string|null $ip_address
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'business', 'phone', 'email', 'service', 'budget', 'details', 'status', 'ip_address'])]
+#[Fillable(['name', 'business', 'phone', 'email', 'service', 'budget', 'details', 'notes', 'status', 'follow_up_on', 'ip_address'])]
 class QuoteRequest extends Model
 {
     /** @use HasFactory<QuoteRequestFactory> */
@@ -60,6 +62,7 @@ class QuoteRequest extends Model
     {
         return [
             'status' => QuoteStatus::class,
+            'follow_up_on' => 'date',
         ];
     }
 }

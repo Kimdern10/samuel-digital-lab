@@ -50,9 +50,12 @@ new #[Title('Quote requests')] class extends Component {
 }; ?>
 
 <div class="flex flex-col gap-6">
-    <div>
-        <flux:heading size="xl" level="1">{{ __('Quote requests') }}</flux:heading>
-        <flux:text class="mt-1">{{ __('Requests sent from the form on your home page.') }}</flux:text>
+    <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+            <flux:heading size="xl" level="1">{{ __('Quote requests') }}</flux:heading>
+            <flux:text class="mt-1">{{ __('Requests sent from the form on your home page.') }}</flux:text>
+        </div>
+        <flux:button icon="arrow-down-tray" :href="route('admin.quotes.export', array_filter(['status' => $status]))">{{ __('Download CSV') }}</flux:button>
     </div>
 
     <div class="flex flex-wrap gap-2">
@@ -74,7 +77,12 @@ new #[Title('Quote requests')] class extends Component {
                         <div class="truncate font-medium">{{ $quote->name }} @if ($quote->business)<span class="font-normal text-zinc-500">· {{ $quote->business }}</span>@endif</div>
                         <div class="truncate text-sm text-zinc-500">{{ $quote->service }} · {{ $quote->budget }} · {{ $quote->created_at->format('j M Y, g:ia') }}</div>
                     </div>
-                    <flux:badge size="sm" :color="$quote->status->color()">{{ $quote->status->label() }}</flux:badge>
+                    <div class="flex flex-wrap items-center justify-end gap-2">
+                        @if ($quote->follow_up_on)
+                            <flux:badge size="sm" :color="$quote->follow_up_on->isPast() || $quote->follow_up_on->isToday() ? 'red' : 'zinc'" icon="bell">{{ $quote->follow_up_on->isToday() ? __('Follow up today') : $quote->follow_up_on->format('j M') }}</flux:badge>
+                        @endif
+                        <flux:badge size="sm" :color="$quote->status->color()">{{ $quote->status->label() }}</flux:badge>
+                    </div>
                 </a>
             @endforeach
         </div>

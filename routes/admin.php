@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\QuoteExportController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
@@ -15,6 +16,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::livewire('blog/{post:id}/edit', 'pages::admin.posts.form')->name('admin.posts.edit');
 
     Route::livewire('quotes', 'pages::admin.quotes.index')->name('admin.quotes.index');
+    Route::get('quotes/export', QuoteExportController::class)->name('admin.quotes.export');
     Route::livewire('quotes/{quoteRequest}', 'pages::admin.quotes.show')->name('admin.quotes.show');
 
     Route::livewire('content', 'pages::admin.content')->name('admin.content');

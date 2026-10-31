@@ -59,3 +59,41 @@ test('the admin can delete a quote request', function () {
 
     expect(QuoteRequest::query()->count())->toBe(0);
 });
+
+test('the admin can save private notes and a follow-up date', function () {
+    $quote = QuoteRequest::factory()->create();
+
+    Livewire::test('pages::admin.quotes.show', ['quoteRequest' => $quote])
+        ->set('notes', 'Wants 5 pages and Paystack.')
+        ->call('remindIn', 3)
+        ->assertHasNoErrors();
+
+    $quote->refresh();
+
+    expect($quote->notes)->toBe('Wants 5 pages and Paystack.')
+        ->and($quote->follow_up_on?->toDateString())->toBe(now()->addDays(3)->toDateString());
+});
+
+test('the dashboard lists open requests whose follow-up date has arrived', function () {
+    QuoteRequest::factory()->create(['name' => 'Due Today', 'follow_up_on' => today()]);
+    QuoteRequest::factory()->create(['name' => 'Overdue Client', 'follow_up_on' => today()->subDays(2), 'status' => QuoteStatus::Contacted]);
+    QuoteRequest::factory()->create(['name' => 'Next Week', 'follow_up_on' => today()->addWeek()]);
+    QuoteRequest::factory()->create(['name' => 'Already Won', 'follow_up_on' => today(), 'status' => QuoteStatus::Won]);
+
+    $this->get(route('dashboard'))->assertSee('data-test="follow-ups"', escape: false);
+
+    $names = Livewire::test('pages::admin.dashboard')->instance()->followUps->pluck('name')->all();
+
+    expect($names)->toBe(['Overdue Client', 'Due Today']);
+});
+
+test('quote requests can be downloaded as a CSV, optionally by status', function () {
+    QuoteRequest::factory()->create(['name' => 'Ngozi Eze', 'notes' => 'Call back Friday']);
+    QuoteRequest::factory()->create(['name' => 'Chidi Okafor', 'status' => QuoteStatus::Won]);
+
+    $all = $this->get(route('admin.quotes.export'))->assertOk()->streamedContent();
+    $won = $this->get(route('admin.quotes.export', ['status' => 'won']))->streamedContent();
+
+    expect($all)->toContain('Ngozi Eze')->toContain('Call back Friday')->toContain('Chidi Okafor')
+        ->and($won)->toContain('Chidi Okafor')->not->toContain('Ngozi Eze');
+});

@@ -110,6 +110,22 @@ new #[Title('Dashboard')] class extends Component {
     }
 
     /**
+     * Open quote requests whose follow-up date has arrived.
+     *
+     * @return Collection<int, QuoteRequest>
+     */
+    #[Computed]
+    public function followUps(): Collection
+    {
+        return QuoteRequest::query()
+            ->whereNotNull('follow_up_on')
+            ->whereDate('follow_up_on', '<=', today())
+            ->whereIn('status', [QuoteStatus::New, QuoteStatus::Contacted])
+            ->orderBy('follow_up_on')
+            ->get();
+    }
+
+    /**
      * The latest quote requests.
      *
      * @return Collection<int, QuoteRequest>
@@ -168,6 +184,25 @@ new #[Title('Dashboard')] class extends Component {
             <flux:heading size="xl" class="mt-2 font-mono">{{ $this->stats['draft_works'] }}</flux:heading>
         </flux:card>
     </div>
+
+    @if ($this->followUps->isNotEmpty())
+        <flux:callout icon="bell-alert" color="amber" data-test="follow-ups">
+            <flux:callout.heading>{{ trans_choice('{1} 1 quote request to follow up today|[2,*] :count quote requests to follow up today', $this->followUps->count()) }}</flux:callout.heading>
+            <flux:callout.text>
+                <ul class="mt-2 grid gap-1">
+                    @foreach ($this->followUps as $quote)
+                        <li wire:key="follow-up-{{ $quote->id }}">
+                            <flux:link :href="route('admin.quotes.show', $quote)" wire:navigate>{{ $quote->name }}@if ($quote->business) ({{ $quote->business }})@endif</flux:link>
+                            · {{ $quote->service }}
+                            @if ($quote->follow_up_on->isPast() && ! $quote->follow_up_on->isToday())
+                                · <span class="text-red-600 dark:text-red-400">{{ __('overdue since :date', ['date' => $quote->follow_up_on->format('j M')]) }}</span>
+                            @endif
+                        </li>
+                    @endforeach
+                </ul>
+            </flux:callout.text>
+        </flux:callout>
+    @endif
 
     @php($done = collect($this->checklist)->where('done', true)->count())
     @if ($done < count($this->checklist))
