@@ -18,6 +18,15 @@
 
     <section class="section">
         <div class="container">
+            @if ($categories->count() > 1)
+                <nav class="filters" aria-label="Filter by type of website">
+                    <a href="{{ route('work.index') }}" wire:navigate.hover @class(['filter', 'is-active' => $category === null]) @if ($category === null) aria-current="page" @endif>All</a>
+                    @foreach ($categories as $option)
+                        <a href="{{ route('work.index', ['category' => $option]) }}" wire:navigate.hover @class(['filter', 'is-active' => $category === $option]) @if ($category === $option) aria-current="page" @endif>{{ $option }}</a>
+                    @endforeach
+                </nav>
+            @endif
+
             @if ($works->isEmpty())
                 <p class="empty">New projects are being added. Ask us on WhatsApp for examples of sites we have built.</p>
             @else

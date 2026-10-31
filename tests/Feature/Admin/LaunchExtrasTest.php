@@ -5,10 +5,12 @@ use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 
-test('visitor statistics are added for visitors once an ID is saved, but not for the admin', function () {
+test('visitor statistics and the cookie notice are offered to visitors once an ID is saved, but not to the admin', function () {
     $admin = User::factory()->admin()->create();
 
-    $this->get(route('home'))->assertDontSee('googletagmanager.com', escape: false);
+    $this->get(route('home'))
+        ->assertDontSee('name="analytics-id"', escape: false)
+        ->assertDontSee('data-cookie-banner', escape: false);
 
     $this->actingAs($admin);
     Livewire::test('pages::admin.settings')
@@ -17,10 +19,15 @@ test('visitor statistics are added for visitors once an ID is saved, but not for
         ->assertHasNoErrors();
 
     expect(Setting::get('google_analytics_id'))->toBe('G-ABC123XYZ');
-    $this->get(route('home'))->assertDontSee('googletagmanager.com', escape: false);
+    $this->get(route('home'))->assertDontSee('name="analytics-id"', escape: false);
 
     auth()->logout();
-    $this->get(route('home'))->assertSee('googletagmanager.com/gtag/js?id=G-ABC123XYZ', escape: false);
+    $this->get(route('home'))
+        ->assertSee('<meta name="analytics-id" content="G-ABC123XYZ">', escape: false)
+        ->assertSee('data-cookie-banner', escape: false)
+        ->assertSee('Cookie settings')
+        // Google's script is only loaded by the browser after the visitor accepts.
+        ->assertDontSee('googletagmanager.com', escape: false);
 });
 
 test('the analytics ID must look like a Google Analytics measurement ID', function () {

@@ -22,6 +22,28 @@ new #[Title('Business details')] class extends Component {
 
     public string $analyticsId = '';
 
+    /** @var array{google_rating: string, google_review_count: string, google_reviews_url: string} */
+    public array $reviews = ['google_rating' => '', 'google_review_count' => '', 'google_reviews_url' => ''];
+
+    /**
+     * Save the Google reviews card (leave the rating empty to hide it).
+     */
+    public function saveReviews(): void
+    {
+        $this->validate([
+            'reviews.google_rating' => ['nullable', 'numeric', 'min:1', 'max:5'],
+            'reviews.google_review_count' => ['nullable', 'integer', 'min:0', 'max:1000000'],
+            'reviews.google_reviews_url' => ['nullable', 'required_with:reviews.google_rating', 'url:https', 'max:500'],
+        ], [
+            'reviews.google_rating.numeric' => 'Use your Google rating, e.g. 4.9.',
+            'reviews.google_reviews_url.required_with' => 'Paste the link to your Google reviews so visitors can read them.',
+        ]);
+
+        Setting::put(array_map(fn (?string $value): string => trim((string) $value), $this->reviews));
+
+        Flux::toast(variant: 'success', text: __('Google reviews card saved.'));
+    }
+
     public string $privacyPolicy = '';
 
     /**
@@ -111,6 +133,7 @@ new #[Title('Business details')] class extends Component {
         $this->settings = Setting::values();
         $this->showNameWithLogo = $this->settings['logo_show_name'] === '1';
         $this->analyticsId = $this->settings['google_analytics_id'];
+        $this->reviews = array_intersect_key($this->settings, $this->reviews);
         $this->privacyPolicy = Setting::privacyPolicy();
     }
 
@@ -237,6 +260,21 @@ new #[Title('Business details')] class extends Component {
         @if ($settings['google_analytics_id'] !== '' || \App\Models\Setting::get('google_analytics_id') !== '')
             <flux:text class="text-sm"><flux:badge size="sm" color="green">{{ __('On') }}</flux:badge> {{ __('Leave the box empty and save to turn statistics off.') }}</flux:text>
         @endif
+    </flux:card>
+
+    <flux:card class="grid gap-4">
+        <div>
+            <flux:heading size="lg">{{ __('Google reviews') }}</flux:heading>
+            <flux:text class="mt-1">{{ __('Shows your Google rating above your testimonials, linking to your reviews. Copy the numbers from your Google Business Profile. Leave the rating empty to hide the card.') }}</flux:text>
+        </div>
+        <form wire:submit="saveReviews" class="grid gap-4">
+            <div class="grid gap-4 sm:grid-cols-2">
+                <flux:input wire:model="reviews.google_rating" :label="__('Rating')" placeholder="4.9" inputmode="decimal" />
+                <flux:input wire:model="reviews.google_review_count" :label="__('Number of reviews')" placeholder="23" inputmode="numeric" />
+            </div>
+            <flux:input wire:model="reviews.google_reviews_url" type="url" :label="__('Link to your Google reviews')" placeholder="https://g.page/r/..." />
+            <div><flux:button type="submit">{{ __('Save') }}</flux:button></div>
+        </form>
     </flux:card>
 
     <flux:card class="grid gap-4">

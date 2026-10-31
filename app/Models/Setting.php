@@ -43,6 +43,9 @@ class Setting extends Model
         'logo_show_name' => '1',
         'google_analytics_id' => '',
         'privacy_policy' => '',
+        'google_rating' => '',
+        'google_review_count' => '',
+        'google_reviews_url' => '',
 
         // About me
         'about_eyebrow' => 'About me',
@@ -148,7 +151,7 @@ class Setting extends Model
     public const array BUSINESS_KEYS = [
         'business_name', 'tagline', 'whatsapp_primary', 'whatsapp_secondary', 'email', 'city',
         'facebook_url', 'instagram_url', 'x_url', 'linkedin_url', 'tiktok_url', 'logo_path', 'logo_show_name',
-        'google_analytics_id', 'privacy_policy',
+        'google_analytics_id', 'privacy_policy', 'google_rating', 'google_review_count', 'google_reviews_url',
         'about_eyebrow', 'about_title', 'about_name', 'about_role', 'about_photo_path', 'about_cv_path', 'github_url', 'about_story',
     ];
 

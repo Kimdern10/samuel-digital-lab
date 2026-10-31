@@ -40,7 +40,70 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
+// Cookie consent: Google Analytics loads only after the visitor accepts
+const CONSENT_KEY = 'sdl-cookie-consent';
+let analyticsLoaded = false;
+
+const getConsent = () => {
+    try {
+        return localStorage.getItem(CONSENT_KEY);
+    } catch (error) {
+        return null;
+    }
+};
+
+const loadAnalytics = () => {
+    const id = document.querySelector('meta[name="analytics-id"]')?.content;
+
+    if (! id || analyticsLoaded) {
+        return;
+    }
+
+    analyticsLoaded = true;
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function gtag() { window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    window.gtag('config', id);
+
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(id)}`;
+    document.head.append(script);
+};
+
+const setCookieBanner = (visible) => {
+    const banner = document.querySelector('[data-cookie-banner]');
+
+    if (banner) {
+        banner.hidden = ! visible;
+    }
+};
+
 document.addEventListener('click', (event) => {
+    const choice = event.target.closest('[data-cookie-choice]');
+
+    if (choice) {
+        try {
+            localStorage.setItem(CONSENT_KEY, choice.dataset.cookieChoice);
+        } catch (error) {
+            // Without storage the choice lasts for this visit only.
+        }
+
+        setCookieBanner(false);
+
+        if (choice.dataset.cookieChoice === 'accepted') {
+            loadAnalytics();
+        }
+
+        return;
+    }
+
+    if (event.target.closest('[data-cookie-settings]')) {
+        setCookieBanner(true);
+
+        return;
+    }
+
     // Light / dark switch, remembered on this device
     if (event.target.closest('[data-theme-toggle]')) {
         const current = root.dataset.theme
@@ -363,6 +426,14 @@ const initPage = () => {
 
     main.dataset.ready = '1';
     setMenu(false);
+
+    const consent = getConsent();
+
+    if (consent === 'accepted') {
+        loadAnalytics();
+    }
+
+    setCookieBanner(consent === null && analyticsLoaded === false);
     onScroll();
     initRotators();
     initReveal();

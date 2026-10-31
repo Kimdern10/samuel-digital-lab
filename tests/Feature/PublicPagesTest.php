@@ -2,6 +2,7 @@
 
 use App\Models\Service;
 use App\Models\Setting;
+use App\Models\User;
 use App\Models\Work;
 
 test('the home page shows visible services with their prices', function () {
@@ -84,6 +85,50 @@ test('a missing page shows the branded not found page', function () {
         ->assertNotFound()
         ->assertSee('This page is')
         ->assertSee('Go to the home page');
+});
+
+test('the work page can be filtered by type of website', function () {
+    Work::factory()->create(['title' => 'Eze Shop', 'category' => 'E-commerce website']);
+    Work::factory()->create(['title' => 'Daily News', 'category' => 'Blog & news website']);
+
+    $this->get(route('work.index'))
+        ->assertSee('Eze Shop')
+        ->assertSee('Daily News')
+        ->assertSee(route('work.index', ['category' => 'E-commerce website']), escape: false);
+
+    $this->get(route('work.index', ['category' => 'E-commerce website']))
+        ->assertSee('Eze Shop')
+        ->assertDontSee('Daily News');
+
+    $this->get(route('work.index', ['category' => 'Not a real category']))
+        ->assertSee('Eze Shop')
+        ->assertSee('Daily News');
+});
+
+test('the Google reviews card shows once a rating and link are saved', function () {
+    $this->get(route('home'))->assertDontSee('data-test="google-rating"', escape: false);
+
+    $this->actingAs(User::factory()->admin()->create());
+    Livewire\Livewire::test('pages::admin.settings')
+        ->set('reviews.google_rating', '4.9')
+        ->set('reviews.google_review_count', '23')
+        ->set('reviews.google_reviews_url', 'https://g.page/r/samueldigitallab/review')
+        ->call('saveReviews')
+        ->assertHasNoErrors();
+
+    $this->get(route('home'))
+        ->assertSee('data-test="google-rating"', escape: false)
+        ->assertSee('Based on 23 Google reviews')
+        ->assertSee('https://g.page/r/samueldigitallab/review', escape: false);
+});
+
+test('the Google rating must be between 1 and 5 and needs a link', function () {
+    $this->actingAs(User::factory()->admin()->create());
+
+    Livewire\Livewire::test('pages::admin.settings')
+        ->set('reviews.google_rating', '7')
+        ->call('saveReviews')
+        ->assertHasErrors(['reviews.google_rating', 'reviews.google_reviews_url']);
 });
 
 test('a draft work cannot be opened by visitors', function () {

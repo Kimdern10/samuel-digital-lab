@@ -329,6 +329,10 @@ a.frame__addr:hover { color: var(--ink); }
 .work-card__domain svg { width: 15px; height: 15px; color: var(--brand); }
 .work-card__result { font-size: 13.5px; font-weight: 700; color: var(--ink); display: inline-flex; gap: 8px; align-items: center; }
 .work-card__result::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 36px; }
+.filter { text-decoration: none; font-size: 14.5px; font-weight: 700; padding: 10px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); transition: color .2s, border-color .2s, background-color .2s; }
+.filter:hover { color: var(--ink); border-color: var(--ink); }
+.filter.is-active { background: var(--ink); border-color: var(--ink); color: var(--bg); }
 .empty { border: 1px dashed var(--line); border-radius: var(--radius); padding: 40px; text-align: center; color: var(--muted); }
 @media (max-width: 980px) { .work-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .work-grid { grid-template-columns: minmax(0, 1fr); } }
@@ -365,6 +369,14 @@ a.frame__addr:hover { color: var(--ink); }
 .testimonial figcaption span { font-size: 13.5px; color: var(--muted); }
 @media (max-width: 980px) { .testimonials { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .testimonials { grid-template-columns: minmax(0, 1fr); } }
+
+.google-rating { display: flex; align-items: center; gap: 16px; width: fit-content; margin: -16px auto 40px; padding: 14px 22px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); box-shadow: var(--shadow); text-decoration: none; color: var(--ink); transition: transform .3s var(--ease); }
+.google-rating:hover { transform: translateY(-3px); }
+.google-rating__logo svg { width: 34px; height: 34px; display: block; }
+.google-rating__score { display: flex; align-items: center; gap: 10px; font-size: 20px; }
+.google-rating__stars { position: relative; color: var(--line); letter-spacing: 2px; font-size: 18px; }
+.google-rating__stars::before { content: "★★★★★"; position: absolute; inset: 0; width: calc(var(--rating) / 5 * 100%); overflow: hidden; color: var(--amber); }
+.google-rating__count { display: block; font-size: 13.5px; color: var(--muted); }
 
 /* Why choose us (bento) */
 .bento { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
@@ -548,6 +560,15 @@ a.frame__addr:hover { color: var(--ink); }
 .footer__bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding-top: 24px; font-size: 13.5px; }
 @media (max-width: 900px) { .footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .footer__brand { grid-column: span 2; } }
 @media (max-width: 480px) { .footer__grid { grid-template-columns: minmax(0, 1fr); } .footer__brand { grid-column: auto; } }
+
+/* Cookie notice */
+.cookie { position: fixed; left: max(16px, env(safe-area-inset-left, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px)); z-index: 55; max-width: 440px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 20px; padding: 18px 20px; box-shadow: 0 24px 60px -20px rgba(0, 0, 0, .45); display: grid; gap: 14px; animation: pop .45s var(--ease); }
+.cookie[hidden] { display: none; }
+.cookie p { font-size: 14.5px; color: var(--muted); }
+.cookie a { color: var(--brand); font-weight: 700; }
+.cookie__actions { display: flex; gap: 8px; justify-content: flex-end; }
+@media (max-width: 520px) { .cookie { right: 16px; max-width: none; bottom: 88px; } }
+.link-button { background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 
 /* Floating WhatsApp button */
 .wa-float { position: fixed; right: max(18px, env(safe-area-inset-right, 0px)); bottom: max(18px, env(safe-area-inset-bottom, 0px)); z-index: 40; width: 58px; height: 58px; border-radius: 999px; background: #25d366; color: #fff; display: grid; place-items: center; box-shadow: 0 14px 30px -10px rgba(37, 211, 102, .7); transition: transform .3s var(--ease); }
