@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\InvoicePdfController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\QuoteExportController;
 use Illuminate\Support\Facades\Route;
@@ -30,4 +31,12 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
 
     Route::livewire('newsletter', 'pages::admin.subscribers')->name('admin.subscribers');
     Route::get('newsletter/export', [NewsletterController::class, 'export'])->name('admin.subscribers.export');
+
+    Route::livewire('clients', 'pages::admin.clients')->name('admin.clients');
+    Route::livewire('projects', 'pages::admin.projects.index')->name('admin.projects.index');
+    Route::livewire('projects/{project}', 'pages::admin.projects.show')->name('admin.projects.show');
+    Route::livewire('invoices', 'pages::admin.invoices.index')->name('admin.invoices.index');
+    Route::livewire('invoices/create', 'pages::admin.invoices.form')->name('admin.invoices.create');
+    Route::livewire('invoices/{invoice:id}/edit', 'pages::admin.invoices.form')->name('admin.invoices.edit');
+    Route::get('invoices/{invoice}/pdf', InvoicePdfController::class)->name('admin.invoices.pdf');
 });

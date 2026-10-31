@@ -6,11 +6,38 @@
     <body class="min-h-screen bg-white dark:bg-zinc-800">
         <flux:sidebar sticky collapsible="mobile" class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:sidebar.header>
-                <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />
+                <x-app-logo :sidebar="true" href="{{ \App\Http\Responses\LoginResponse::homeFor(auth()->user()) }}" wire:navigate />
                 <flux:sidebar.collapse class="lg:hidden" />
             </flux:sidebar.header>
 
+            @unless (auth()->user()->is_admin)
+                <flux:sidebar.nav>
+                    <flux:sidebar.group :heading="__('My account')" class="grid">
+                        <flux:sidebar.item icon="home" :href="route('portal')" :current="request()->routeIs('portal', 'portal.projects.*')" wire:navigate.hover>
+                            {{ __('My website') }}
+                        </flux:sidebar.item>
+                        <flux:sidebar.item icon="banknotes" :href="route('portal.invoices')" :current="request()->routeIs('portal.invoices*')" :badge="auth()->user()->invoices()->where('status', \App\Enums\InvoiceStatus::Unpaid)->count() ?: null" wire:navigate.hover>
+                            {{ __('Invoices') }}
+                        </flux:sidebar.item>
+                        <flux:sidebar.item icon="user" :href="route('profile.edit')" :current="request()->routeIs('profile.edit', 'security.edit', 'appearance.edit')" wire:navigate.hover>
+                            {{ __('Account') }}
+                        </flux:sidebar.item>
+                    </flux:sidebar.group>
+                </flux:sidebar.nav>
+            @else
             <flux:sidebar.nav>
+                <flux:sidebar.group :heading="__('Clients')" class="grid">
+                    <flux:sidebar.item icon="users" :href="route('admin.clients')" :current="request()->routeIs('admin.clients')" wire:navigate.hover>
+                        {{ __('Clients') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="rectangle-stack" :href="route('admin.projects.index')" :current="request()->routeIs('admin.projects.*')" wire:navigate.hover>
+                        {{ __('Projects') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="banknotes" :href="route('admin.invoices.index')" :current="request()->routeIs('admin.invoices.*')" :badge="\App\Models\Invoice::query()->where('status', \App\Enums\InvoiceStatus::Unpaid)->count() ?: null" wire:navigate.hover>
+                        {{ __('Invoices') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
+
                 <flux:sidebar.group :heading="__('Website')" class="grid">
                     <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate.hover>
                         {{ __('Dashboard') }}
@@ -56,6 +83,7 @@
                     </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
+            @endunless
 
             <flux:spacer />
 

@@ -17,11 +17,11 @@ class CostEstimator
      */
     public static function siteTypes(): array
     {
-        return array_values(array_map(fn (array $type): array => [
+        return array_map(fn (array $type): array => [
             'name' => (string) ($type['name'] ?? ''),
             'price' => max(0, (int) ($type['price'] ?? 0)),
             'pages' => max(1, (int) ($type['pages'] ?? 1)),
-        ], Setting::list('calc_site_types')));
+        ], Setting::list('calc_site_types'));
     }
 
     /**
@@ -31,10 +31,10 @@ class CostEstimator
      */
     public static function extras(): array
     {
-        return array_values(array_map(fn (array $extra): array => [
+        return array_map(fn (array $extra): array => [
             'name' => (string) ($extra['name'] ?? ''),
             'price' => max(0, (int) ($extra['price'] ?? 0)),
-        ], Setting::list('calc_extras')));
+        ], Setting::list('calc_extras'));
     }
 
     /**

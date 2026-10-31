@@ -20,4 +20,5 @@ Route::get('sitemap.xml', SitemapController::class)->name('sitemap');
 Route::get('robots.txt', [SitemapController::class, 'robots'])->name('robots');
 
 require __DIR__.'/admin.php';
+require __DIR__.'/portal.php';
 require __DIR__.'/settings.php';

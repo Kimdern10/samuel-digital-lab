@@ -54,6 +54,7 @@ class Setting extends Model
         'consult_interval' => '30',
         'consult_days_ahead' => '14',
         'consult_notice_hours' => '3',
+        'bank_details' => '',
         'google_rating' => '',
         'google_review_count' => '',
         'google_reviews_url' => '',
@@ -179,7 +180,7 @@ class Setting extends Model
         'facebook_url', 'instagram_url', 'x_url', 'linkedin_url', 'tiktok_url', 'logo_path', 'logo_show_name',
         'google_analytics_id', 'privacy_policy', 'google_rating', 'google_review_count', 'google_reviews_url',
         'calc_eyebrow', 'calc_title', 'calc_text', 'calc_extra_page_price',
-        'consult_enabled', 'consult_start', 'consult_end', 'consult_minutes', 'consult_interval', 'consult_days_ahead', 'consult_notice_hours',
+        'consult_enabled', 'consult_start', 'consult_end', 'consult_minutes', 'consult_interval', 'consult_days_ahead', 'consult_notice_hours', 'bank_details',
         'about_eyebrow', 'about_title', 'about_name', 'about_role', 'about_photo_path', 'about_cv_path', 'github_url', 'about_story',
     ];
 

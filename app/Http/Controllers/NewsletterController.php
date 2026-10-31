@@ -26,6 +26,11 @@ class NewsletterController extends Controller
     {
         return response()->streamDownload(function (): void {
             $output = fopen('php://output', 'w');
+
+            if ($output === false) {
+                return;
+            }
+
             fputcsv($output, ['email', 'subscribed_on', 'unsubscribe_link']);
 
             Subscriber::query()->active()->orderBy('id')->each(function (Subscriber $subscriber) use ($output): void {

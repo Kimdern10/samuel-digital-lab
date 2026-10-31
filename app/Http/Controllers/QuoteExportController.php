@@ -18,6 +18,11 @@ class QuoteExportController extends Controller
 
         return response()->streamDownload(function () use ($status): void {
             $output = fopen('php://output', 'w');
+
+            if ($output === false) {
+                return;
+            }
+
             fputcsv($output, ['date', 'name', 'business', 'phone', 'email', 'service', 'budget', 'status', 'follow_up_on', 'details', 'notes']);
 
             QuoteRequest::query()

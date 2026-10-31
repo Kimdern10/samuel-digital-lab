@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureUserIsAdmin;
+use App\Http\Responses\LoginResponse;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -16,6 +17,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => EnsureUserIsAdmin::class,
         ]);
+
+        // Logged-in visitors to the login page go to their own home: the admin or the client portal.
+        $middleware->redirectUsersTo(fn (Request $request): string => LoginResponse::homeFor($request->user()));
+
+        // Paystack calls this address directly, so it cannot carry a CSRF token; it is checked by signature instead.
+        $middleware->validateCsrfTokens(except: ['paystack/webhook']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
