@@ -55,7 +55,7 @@
             <link rel="apple-touch-icon" href="/apple-touch-icon.png">
         @endif
 
-        <script>document.documentElement.classList.add('js'); try { var t = localStorage.getItem('sdl-theme'); if (t === 'light' || t === 'dark') { document.documentElement.dataset.theme = t; } } catch (e) {}</script>
+        <script>document.documentElement.classList.add('js'); try { var t = localStorage.getItem('flux.appearance'), old = localStorage.getItem('sdl-theme'); if (! t && (old === 'light' || old === 'dark')) { t = old; localStorage.setItem('flux.appearance', t); } localStorage.removeItem('sdl-theme'); if (t === 'light' || t === 'dark') { document.documentElement.dataset.theme = t; } } catch (e) {}</script>
 
         @fonts('plus-jakarta-sans')
         @vite(['resources/css/site.css', 'resources/js/site.js'])

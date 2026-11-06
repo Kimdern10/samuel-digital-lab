@@ -104,7 +104,8 @@ document.addEventListener('click', (event) => {
         return;
     }
 
-    // Light / dark switch, remembered on this device
+    // Light / dark switch, remembered on this device. It uses the same saved setting as the
+    // admin and client account pages (Flux), so every page shows the same mode.
     if (event.target.closest('[data-theme-toggle]')) {
         const current = root.dataset.theme
             || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
@@ -113,7 +114,7 @@ document.addEventListener('click', (event) => {
         root.dataset.theme = next;
 
         try {
-            localStorage.setItem('sdl-theme', next);
+            localStorage.setItem('flux.appearance', next);
         } catch (error) {
             // Storage can be blocked; the switch still works for this visit.
         }
@@ -442,10 +443,34 @@ const initPage = () => {
     initLightbox();
 };
 
-document.addEventListener('livewire:navigating', () => {
+// Livewire's navigation replaces the <html> attributes with the server's, which have no
+// saved mode, so put the visitor's light / dark choice (and the "js" flag) back before the new page shows.
+const applySavedTheme = () => {
+    let theme = null;
+
+    root.classList.add('js');
+
+    try {
+        theme = localStorage.getItem('flux.appearance');
+    } catch (error) {
+        // Storage can be blocked; fall back to the device setting.
+    }
+
+    if (theme === 'light' || theme === 'dark') {
+        root.dataset.theme = theme;
+    } else {
+        delete root.dataset.theme;
+    }
+};
+
+document.addEventListener('livewire:navigating', (event) => {
     cleanups.forEach((cleanup) => cleanup());
     cleanups = [];
+
+    event.detail?.onSwap?.(applySavedTheme);
 });
+
+document.addEventListener('livewire:navigated', applySavedTheme);
 
 let firstPage = true;
 
