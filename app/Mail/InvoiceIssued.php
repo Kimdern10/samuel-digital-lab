@@ -44,7 +44,7 @@ class InvoiceIssued extends Mailable
             markdown: 'mail.invoice-issued',
             with: [
                 'businessName' => Setting::get('business_name'),
-                'invoiceUrl' => route('portal.invoices.show', $this->invoice),
+                'invoiceUrl' => $this->invoice->payLink(),
                 'canPayOnline' => Paystack::enabled(),
                 'bankDetails' => Setting::get('bank_details'),
             ],

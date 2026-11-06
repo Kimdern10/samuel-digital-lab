@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\InvoiceLinkController;
 use App\Http\Controllers\InvoicePdfController;
 use App\Http\Controllers\PaystackController;
 use Illuminate\Support\Facades\Route;
@@ -10,8 +11,16 @@ Route::middleware(['auth', 'verified'])->prefix('portal')->group(function () {
     Route::livewire('invoices', 'pages::portal.invoices')->name('portal.invoices');
     Route::livewire('invoices/{invoice}', 'pages::portal.invoice')->name('portal.invoices.show');
     Route::post('invoices/{invoice}/pay', [PaystackController::class, 'pay'])->middleware('throttle:10,1')->name('portal.invoices.pay');
-    Route::get('payments/callback', [PaystackController::class, 'callback'])->name('portal.payments.callback');
     Route::get('invoices/{invoice}/pdf', InvoicePdfController::class)->name('portal.invoices.pdf');
 });
 
 Route::post('paystack/webhook', [PaystackController::class, 'webhook'])->middleware('throttle:60,1')->name('paystack.webhook');
+
+// Signed links from the invoice email: pay without logging in.
+Route::middleware('signed')->prefix('invoice')->group(function () {
+    Route::get('{invoice}', [InvoiceLinkController::class, 'show'])->name('invoices.public');
+    Route::post('{invoice}/pay', [PaystackController::class, 'payByLink'])->middleware('throttle:10,1')->name('invoices.public.pay');
+    Route::get('{invoice}/pdf', [InvoiceLinkController::class, 'pdf'])->name('invoices.public.pdf');
+});
+
+Route::get('payments/{invoice}/callback', [PaystackController::class, 'callback'])->name('payments.callback');

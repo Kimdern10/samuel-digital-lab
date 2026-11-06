@@ -22,6 +22,10 @@ Please pay by **{{ $invoice->due_on->format('j F Y') }}**.
 {{ $canPayOnline ? 'View and pay online' : 'View your invoice' }}
 </x-mail::button>
 
+@if ($canPayOnline)
+No login needed: the button opens your invoice with a secure Paystack payment.
+@endif
+
 @if (filled($bankDetails))
 You can also pay by bank transfer:
 

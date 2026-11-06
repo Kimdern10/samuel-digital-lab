@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\URL;
 
 /**
  * An invoice a client pays online (Paystack) or by bank transfer.
@@ -111,6 +112,14 @@ class Invoice extends Model
     public function isPayable(): bool
     {
         return $this->status === InvoiceStatus::Unpaid && $this->amount > 0;
+    }
+
+    /**
+     * A private link to view and pay the invoice without logging in (sent in the invoice email).
+     */
+    public function payLink(): string
+    {
+        return URL::signedRoute('invoices.public', $this);
     }
 
     /**

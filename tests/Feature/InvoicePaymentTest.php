@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
 
 beforeEach(function () {
@@ -149,12 +150,80 @@ test('without Paystack keys the client is asked to pay by bank transfer', functi
         ->assertDontSee('with Paystack');
 });
 
+/**
+ * The address Paystack sends the payer back to, with the reference it adds.
+ */
+function paystackReturnUrl(Invoice $invoice, string $reference): string
+{
+    return URL::signedRoute('payments.callback', $invoice).'&trxref='.$reference.'&reference='.$reference;
+}
+
+test('anyone with the pay link can see the invoice and pay it without logging in', function () {
+    Http::fake(['api.paystack.co/transaction/initialize' => Http::response([
+        'status' => true,
+        'data' => ['authorization_url' => 'https://checkout.paystack.com/abc123'],
+    ])]);
+    $invoice = Invoice::factory()->create(['amount' => 7500000]);
+
+    $this->get($invoice->payLink())
+        ->assertOk()
+        ->assertHeader('X-Robots-Tag', 'noindex, nofollow')
+        ->assertSee($invoice->number)
+        ->assertSee('Pay ₦75,000 with Paystack');
+
+    $this->post(URL::signedRoute('invoices.public.pay', $invoice))
+        ->assertRedirect('https://checkout.paystack.com/abc123');
+
+    Http::assertSent(fn (Request $request) => $request['email'] === $invoice->client->email
+        && str_contains($request['callback_url'], '/payments/'.$invoice->id.'/callback'));
+});
+
+test('the invoice pay link cannot be guessed or changed', function () {
+    Http::fake();
+    $invoice = Invoice::factory()->create();
+    $other = Invoice::factory()->create();
+
+    $this->get(route('invoices.public', $invoice))->assertForbidden();
+    $this->get(str_replace('/invoice/'.$invoice->id, '/invoice/'.$other->id, $invoice->payLink()))->assertForbidden();
+    $this->post(route('invoices.public.pay', $invoice))->assertForbidden();
+    $this->get(route('invoices.public.pdf', $invoice))->assertForbidden();
+    $this->get(route('payments.callback', ['invoice' => $invoice, 'reference' => 'X']))->assertForbidden();
+
+    Http::assertNothingSent();
+});
+
+test('someone paying from the pay link returns to it with a thank you', function () {
+    $invoice = Invoice::factory()->create();
+    Http::fake(['api.paystack.co/transaction/verify/*' => Http::response(['status' => true, 'data' => paystackPayment($invoice)])]);
+
+    $this->get(paystackReturnUrl($invoice, $invoice->number.'-ABCD1234'))
+        ->assertRedirect($invoice->payLink())
+        ->assertSessionHas('payment_success');
+
+    expect($invoice->refresh()->status)->toBe(InvoiceStatus::Paid);
+
+    $this->get($invoice->payLink())
+        ->assertSee('Paid')
+        ->assertDontSee('with Paystack')
+        ->assertSee('Download receipt (PDF)');
+});
+
+test('a payment for another invoice does not count for this one', function () {
+    $invoice = Invoice::factory()->create();
+    $other = Invoice::factory()->create();
+    Http::fake(['api.paystack.co/transaction/verify/*' => Http::response(['status' => true, 'data' => paystackPayment($other)])]);
+
+    $this->get(paystackReturnUrl($invoice, 'X'))->assertSessionHas('payment_error');
+
+    expect($invoice->refresh()->status)->toBe(InvoiceStatus::Unpaid);
+});
+
 test('the invoice is marked paid when Paystack confirms the payment on return', function () {
     $invoice = Invoice::factory()->create();
     Http::fake(['api.paystack.co/transaction/verify/*' => Http::response(['status' => true, 'data' => paystackPayment($invoice)])]);
 
     $this->actingAs($invoice->client)
-        ->get(route('portal.payments.callback', ['reference' => $invoice->number.'-ABCD1234']))
+        ->get(paystackReturnUrl($invoice, $invoice->number.'-ABCD1234'))
         ->assertRedirect(route('portal.invoices.show', $invoice))
         ->assertSessionHas('payment_success');
 
@@ -171,7 +240,7 @@ test('a payment for less than the invoice total does not mark it paid', function
     Http::fake(['api.paystack.co/transaction/verify/*' => Http::response(['status' => true, 'data' => paystackPayment($invoice, ['amount' => 100])])]);
 
     $this->actingAs($invoice->client)
-        ->get(route('portal.payments.callback', ['reference' => 'X']))
+        ->get(paystackReturnUrl($invoice, 'X'))
         ->assertSessionHas('payment_error');
 
     expect($invoice->refresh()->status)->toBe(InvoiceStatus::Unpaid);

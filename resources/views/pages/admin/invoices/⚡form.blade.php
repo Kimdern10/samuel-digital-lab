@@ -260,6 +260,10 @@ new #[Title('Invoice')] class extends Component {
         @endif
     </div>
 
+    @if ($invoice && $invoice->status !== \App\Enums\InvoiceStatus::Cancelled)
+        <flux:input :value="$invoice->payLink()" readonly copyable :label="$invoice->isPayable() ? __('Pay link') : __('Receipt link')" :description="__('Anyone with this link can view and pay the invoice without logging in. Send it on WhatsApp if the email does not arrive.')" />
+    @endif
+
     <form wire:submit="save" class="grid gap-5 rounded-xl border border-zinc-200 p-5 dark:border-zinc-700">
         <fieldset @disabled(! $this->isEditable) class="grid gap-5">
             <div class="grid gap-5 sm:grid-cols-2">
