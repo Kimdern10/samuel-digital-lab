@@ -82,9 +82,15 @@
                     @endforeach
                 </nav>
                 <div class="header-tools">
-                    @if (auth()->user()?->is_admin)
-                        <a class="btn btn--sm btn--header" href="{{ route('dashboard') }}" data-test="admin-dashboard-link">Dashboard</a>
-                    @endif
+                    @auth
+                        @if (auth()->user()->is_admin)
+                            <a class="btn btn--sm btn--header" href="{{ route('dashboard') }}" data-test="admin-dashboard-link">Dashboard</a>
+                        @else
+                            <a class="btn btn--sm btn--header" href="{{ route('portal') }}" data-test="portal-link">My account</a>
+                        @endif
+                    @else
+                        <a class="btn btn--sm btn--header" href="{{ route('login') }}" data-test="login-link">Log in</a>
+                    @endauth
                     <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="Switch light or dark mode">
                         <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
                         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
@@ -100,9 +106,11 @@
                 <a href="{{ $href }}" @unless (str_contains($href, '#')) wire:navigate.hover @endunless>{{ $label }}</a>
             @endforeach
             <a class="btn btn--primary" href="{{ route('home') }}#contact">Get a free quote <x-site-icon name="arrow-right" /></a>
-            @if (auth()->user()?->is_admin)
-                <a class="btn btn--ghost-light" href="{{ route('dashboard') }}">Go to your dashboard</a>
-            @endif
+            @auth
+                <a class="btn btn--ghost-light" href="{{ auth()->user()->is_admin ? route('dashboard') : route('portal') }}">{{ auth()->user()->is_admin ? 'Go to your dashboard' : 'My account' }}</a>
+            @else
+                <a class="btn btn--ghost-light" href="{{ route('login') }}">Log in</a>
+            @endauth
         </nav>
 
         <main id="main">

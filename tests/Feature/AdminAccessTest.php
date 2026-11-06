@@ -47,11 +47,17 @@ test('the admin lands on the dashboard after logging in', function () {
         ->assertSee('Welcome back, '.$admin->name);
 });
 
-test('the website shows a dashboard link to the logged-in admin only', function () {
-    $this->get(route('home'))->assertDontSee('data-test="admin-dashboard-link"', escape: false);
+test('the website header shows log in to visitors, my account to clients and the dashboard to the admin', function () {
+    $this->get(route('home'))
+        ->assertSee('data-test="login-link"', escape: false)
+        ->assertDontSee('data-test="admin-dashboard-link"', escape: false)
+        ->assertDontSee('/register');
 
     $this->actingAs(User::factory()->create());
-    $this->get(route('home'))->assertDontSee('data-test="admin-dashboard-link"', escape: false);
+    $this->get(route('home'))
+        ->assertSee('data-test="portal-link"', escape: false)
+        ->assertDontSee('data-test="login-link"', escape: false)
+        ->assertDontSee('data-test="admin-dashboard-link"', escape: false);
 
     $this->actingAs(User::factory()->admin()->create());
     $this->get(route('home'))->assertSee('data-test="admin-dashboard-link"', escape: false);

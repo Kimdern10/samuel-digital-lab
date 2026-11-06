@@ -143,7 +143,7 @@ button { font: inherit; }
 .menu-open .site-header { color: #fff; background: transparent; border-color: transparent; backdrop-filter: none; }
 .menu-open body { overflow: hidden; }
 
-@media (max-width: 900px) {
+@media (max-width: 1080px) {
     .site-nav, .header-tools .btn { display: none; }
     .menu-toggle { display: grid; align-content: center; }
 }
