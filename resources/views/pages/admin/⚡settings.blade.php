@@ -91,7 +91,7 @@ new #[Title('Business details')] class extends Component {
         Setting::put(['logo_path' => $images->storeLogo($this->logo)]);
 
         if ($oldPath !== '') {
-            Storage::disk('public')->delete($oldPath);
+            Storage::disk('public')->delete([$oldPath, ImageOptimizer::emailLogoPath($oldPath)]);
         }
 
         $this->reset('logo');
@@ -108,7 +108,7 @@ new #[Title('Business details')] class extends Component {
         $oldPath = Setting::get('logo_path');
 
         if ($oldPath !== '') {
-            Storage::disk('public')->delete($oldPath);
+            Storage::disk('public')->delete([$oldPath, ImageOptimizer::emailLogoPath($oldPath)]);
         }
 
         Setting::put(['logo_path' => '']);

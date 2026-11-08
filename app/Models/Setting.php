@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\ImageOptimizer;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -217,6 +218,22 @@ class Setting extends Model
         $path = self::get('logo_path');
 
         return $path !== '' ? Storage::disk('public')->url($path) : null;
+    }
+
+    /**
+     * Get the PNG copy of the uploaded logo for emails (email apps can't show WebP), if there is one.
+     */
+    public static function emailLogoUrl(): ?string
+    {
+        $path = self::get('logo_path');
+
+        if ($path === '') {
+            return null;
+        }
+
+        $pngPath = ImageOptimizer::emailLogoPath($path);
+
+        return Storage::disk('public')->exists($pngPath) ? Storage::disk('public')->url($pngPath) : null;
     }
 
     /**

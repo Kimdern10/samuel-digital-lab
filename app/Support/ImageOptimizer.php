@@ -41,13 +41,17 @@ class ImageOptimizer
     }
 
     /**
-     * Store a logo as a single WebP file (transparency kept) and return its path.
+     * Store a logo as WebP (transparency kept) and return its path.
+     *
+     * A PNG copy is saved next to it for emails, because most email apps cannot show WebP.
      */
     public function storeLogo(UploadedFile $file): string
     {
         $path = 'branding/logo-'.Str::lower((string) Str::ulid()).'.webp';
+        $source = $this->load($file);
 
-        Storage::disk('public')->put($path, $this->encode($this->load($file), self::LOGO_WIDTH));
+        Storage::disk('public')->put($path, $this->encode($source, self::LOGO_WIDTH));
+        Storage::disk('public')->put(self::emailLogoPath($path), $this->encode($source, self::LOGO_WIDTH, 'png'));
 
         return $path;
     }
@@ -84,11 +88,12 @@ class ImageOptimizer
     }
 
     /**
-     * Scale the image down to the given width (never up) and encode it as WebP.
+     * Scale the image down to the given width (never up) and encode it as WebP (or PNG).
      *
      * @param  positive-int  $maxWidth
+     * @param  'webp'|'png'  $format
      */
-    private function encode(GdImage $source, int $maxWidth): string
+    private function encode(GdImage $source, int $maxWidth, string $format = 'webp'): string
     {
         $width = imagesx($source);
         $height = imagesy($source);
@@ -108,8 +113,20 @@ class ImageOptimizer
         imagesavealpha($image, true);
 
         ob_start();
-        imagewebp($image, null, self::QUALITY);
+        if ($format === 'png') {
+            imagepng($image, null, 9);
+        } else {
+            imagewebp($image, null, self::QUALITY);
+        }
 
         return (string) ob_get_clean();
+    }
+
+    /**
+     * Where the PNG copy of a logo (used in emails) is stored.
+     */
+    public static function emailLogoPath(string $logoPath): string
+    {
+        return Str::replaceLast('.webp', '.png', $logoPath);
     }
 }
