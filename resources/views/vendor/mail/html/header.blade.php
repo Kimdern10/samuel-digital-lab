@@ -11,8 +11,8 @@
 <table class="header-band" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation">
 <tr>
 <td class="header-cell">
-<a href="{{ $url }}" target="_blank" rel="noopener">
-<img src="{{ $logoSrc }}" class="logo" height="40" alt="{{ $showName ? '' : $site['business_name'] }}" style="height: 40px; width: auto;">@if ($showName)<span class="logo-name">{{ $site['business_name'] }}</span>@endif
+<a href="{{ $url }}" target="_blank" rel="noopener" style="color: #06110b; text-decoration: none;">
+<img src="{{ $logoSrc }}" class="logo" height="40" alt="{{ $showName ? '' : $site['business_name'] }}" style="height: 40px; width: auto;">@if ($showName)<span class="logo-name" style="color: #06110b; font-weight: 800;">{{ $site['business_name'] }}</span>@endif
 </a>
 @if (filled($site['tagline']))
 <p class="header-tagline">{{ $site['tagline'] }}</p>
